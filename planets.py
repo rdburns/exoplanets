@@ -28,7 +28,7 @@ def get_etree():
 
 
 def most_recent(tree):
-    """Returns system containing the most rececntly updated planet.
+    """Returns planet node that has most recent update date.
 
     :param tree: lxml etree
     :returns: lxml etree
