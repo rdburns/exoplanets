@@ -48,4 +48,9 @@ def write_tree(tree,fn):
 if __name__ == '__main__':
     tree = get_etree()
     planet = most_recent(tree)
-    print etree.tostring(planet, pretty_print=True)
+
+    print "Most recently updated planet is " + str(planet.find('name').text)
+    print "  updated on " + planet.find('lastupdate').text
+    print ""
+    print planet.find('description').text
+    print ""
