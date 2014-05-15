@@ -3,6 +3,8 @@ from lxml import etree
 import urllib
 import gzip
 import io
+import time
+
 
 def demo():
     # Output mass and radius of all planets 
@@ -25,8 +27,25 @@ def get_etree():
     return tree
 
 
+def most_recent(tree):
+    """Returns system containing the most rececntly updated planet.
+
+    :param tree: lxml etree
+    :returns: lxml etree
+    """
+    updates = tree.findall('.//lastupdate')
+    update_time = [time.strptime(date.text,'%y/%m/%d') for date in updates]
+    planet = updates[update_time.index(max(update_time))].getparent()
+    return planet
+
+
+def write_tree(tree,fn):
+    xmlstr = etree.tostring(tree, pretty_print=True)
+    with open(fn, 'w') as f:
+        f.write(xmlstr)
+
+        
 if __name__ == '__main__':
     tree = get_etree()
-    xmlstr = etree.tostring(tree, pretty_print=True)
-    with open('planets.xml', 'w') as f:
-        f.write(xmlstr)
+    planet = most_recent(tree)
+    print etree.tostring(planet, pretty_print=True)
