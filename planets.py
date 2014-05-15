@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import xml.etree.ElementTree as ET
+from lxml import etree
 import urllib
 import gzip
 import io
@@ -20,7 +20,13 @@ def demo():
 
 def get_etree():
     url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
-    fo = io.BytesIO(urllib.urlopen(url).read()
-    tree = ET.parse(gzip.GzipFile(fileobj=fo)))
+    fo = io.BytesIO(urllib.urlopen(url).read())
+    tree = etree.parse(gzip.GzipFile(fileobj=fo))
     return tree
 
+
+if __name__ == '__main__':
+    tree = get_etree()
+    xmlstr = etree.tostring(tree, pretty_print=True)
+    with open('planets.xml', 'w') as f:
+        f.write(xmlstr)
