@@ -39,6 +39,24 @@ def most_recent(tree):
     return planet
 
 
+def num_planets(tree):
+    """Returns the total number of planets in the database
+
+    :param tree: lxml etree
+    :returns: integer representing number of planets.
+    """
+    return int(tree.xpath("count(.//planet)"))
+
+
+def largest_system(tree):
+    """Returns system node that has the largest number of planets.
+
+    :param tree: lxml etree
+    :returns: lxml etree centered on system with the mode planets.
+    """
+
+    return tree
+
 def write_tree(tree,fn):
     xmlstr = etree.tostring(tree, pretty_print=True)
     with open(fn, 'w') as f:
@@ -49,8 +67,11 @@ if __name__ == '__main__':
     tree = get_etree()
     planet = most_recent(tree)
 
+
+
     print "Most recently updated planet is " + str(planet.find('name').text)
     print "  updated on " + planet.find('lastupdate').text
     print ""
     print planet.find('description').text
     print ""
+    print "Catalog contains " + str(num_planets(tree)) + " planets."
