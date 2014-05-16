@@ -90,7 +90,7 @@ def summarize_system(system):
     :param system: lxml etree based on <system> tag.
     """
     s = []
-    s.append(system.find('name').text + ' - ' + num_stars(system) + ' stars - ' + num_planets(system) + ' planets')
+    s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
     return '\n'.join(s)
 
 
