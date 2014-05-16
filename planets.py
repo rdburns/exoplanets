@@ -40,7 +40,7 @@ def most_recent(tree):
 
 
 def num_planets(tree):
-    """Returns the total number of planets in the database
+    """Returns the total number of planets in the tree
 
     :param tree: lxml etree
     :returns: integer representing number of planets.
@@ -48,8 +48,17 @@ def num_planets(tree):
     return int(tree.xpath("count(.//planet)"))
 
 
+def num_stars(tree):
+    """Returns the total number of stars in the tree
+
+    :param tree: lxml etree
+    :returns: integer representing number of planets.
+    """
+    return int(tree.xpath("count(.//star)"))
+
+
 def num_systems(tree):
-    """Returns the total number of systems in the database
+    """Returns the total number of systems in the tree
 
     :param tree: lxml etree
     :returns: integer representing number of planets.
@@ -81,7 +90,7 @@ def summarize_system(system):
     :param system: lxml etree based on <system> tag.
     """
     s = []
-    s.append(system.find('name').text)
+    s.append(system.find('name').text + ' - ' + num_stars(system) + ' stars - ' + num_planets(system) + ' planets')
     return '\n'.join(s)
 
 
