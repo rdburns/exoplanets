@@ -84,15 +84,53 @@ def write_tree(tree,fn):
         f.write(xmlstr)
 
 
+def summarize_star(star):
+    """return one line summary of star"""
+    if star.find('name').text[-2] == ' ':
+        name = star.find('name').text[-1]
+    else:
+        name = ' '
+    return '{0} {1} {2}'.format(name, star.find('spectraltype').text, star.find('mass').text)
+
+
+def format_planet_mass_str(planet):
+    """Takes float multiple of Jupiter mass, and returns it rounded and prefixed.
+
+    Uses J2.3 for jupiter masses.
+    Uses E3.4 for earth masses if under 0.05 jupiter masses.
+    """
+    flt_mass = float(planet.find('mass').text)
+    if flt_mass < 0.05:
+        return 'j' + str(round(flt_mass, 3))
+    else:
+        flt_mass = flt_mass * 317.828
+        return 'e' + str(round(flt_mass, 3))
+    
+
+def summarize_planet(planet):
+    """Return one line summary of planet"""
+    if planet.find('list').text == "Confirmed planets":
+        reliable = ' '
+    else:
+        reliable = '?'
+
+    letter = planet.find('name').text.split(' ')[-1]
+
+    mass = format_planet_mass_str(planet)
+    return '{0} {1} {2}'.format(reliable, letter, mass)
+
+
 def summarize_system(system):
     """Prints concise summary of system represented by tree
 
-    :param system: lxml etree based on <system> tag.
+    :param system: lxml ketree based on <system> tag.
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
-    for star in system.xpath("//star"):
-        print star.find('name').text
+    for star in system.iterfind('star'):
+        s.append(' ' + summarize_star(star))
+        for planet in star.iterfind('planet'):
+            s.append('   ' + summarize_planet(planet))
     return '\n'.join(s)
 
 
@@ -110,4 +148,6 @@ if __name__ == '__main__':
     print "Catalog contains " + str(num_planets(tree)) + " planets in " + str(num_systems(tree)) + " systems."
     print ""
     print "Largest system is:"
-    print summarize_system(largest_system(tree))
+    largest = largest_system(tree)
+    write_tree(largest,'largest.xml')
+    print summarize_system(largest)
