@@ -91,6 +91,8 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
+    for star in system.xpath("//star"):
+        print star.find('name').text
     return '\n'.join(s)
 
 
