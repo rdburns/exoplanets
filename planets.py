@@ -48,21 +48,43 @@ def num_planets(tree):
     return int(tree.xpath("count(.//planet)"))
 
 
+def num_systems(tree):
+    """Returns the total number of systems in the database
+
+    :param tree: lxml etree
+    :returns: integer representing number of planets.
+    """
+    return int(tree.xpath("count(.//system)"))
+
+
 def largest_system(tree):
     """Returns system node that has the largest number of planets.
 
     :param tree: lxml etree
     :returns: lxml etree centered on system with the mode planets.
     """
+    system_size = [num_planets(system) for system in tree.xpath(".//system")]
+    largest_idx = system_size.index(max(system_size))
+    root = tree.xpath("//systems")[0]
+    return root[largest_idx]
 
-    return tree
 
 def write_tree(tree,fn):
     xmlstr = etree.tostring(tree, pretty_print=True)
     with open(fn, 'w') as f:
         f.write(xmlstr)
 
-        
+
+def summarize_system(system):
+    """Prints concise summary of system represented by tree
+
+    :param system: lxml etree based on <system> tag.
+    """
+    s = []
+    s.append(system.find('name').text)
+    return '\n'.join(s)
+
+
 if __name__ == '__main__':
     tree = get_etree()
     planet = most_recent(tree)
@@ -74,4 +96,7 @@ if __name__ == '__main__':
     print ""
     print planet.find('description').text
     print ""
-    print "Catalog contains " + str(num_planets(tree)) + " planets."
+    print "Catalog contains " + str(num_planets(tree)) + " planets in " + str(num_systems(tree)) + " systems."
+    print ""
+    print "Largest system is:"
+    print summarize_system(largest_system(tree))
