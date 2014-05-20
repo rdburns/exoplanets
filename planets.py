@@ -186,5 +186,8 @@ if __name__ == '__main__':
     largest = largest_system(tree)
     write_tree(largest,'largest.xml')
     print summarize_system(largest)
-    
-    
+
+    print ""
+    print "Most recently updated:"
+    print most_recent(tree)
+    print summarize_system(most_recent(tree))
