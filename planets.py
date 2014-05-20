@@ -84,6 +84,12 @@ def write_tree(tree,fn):
         f.write(xmlstr)
 
 
+def planet_name(planet):
+    """Returns name of planet, just letter.
+    """
+    return planet.find('name').text.split(' ')[-1]
+    
+
 def summarize_star(star):
     """return one line summary of star"""
     if star.find('name').text[-2] == ' ':
@@ -114,7 +120,7 @@ def summarize_planet(planet):
     else:
         reliable = '?'
 
-    letter = planet.find('name').text.split(' ')[-1]
+    letter = planet_name(planet)
 
     mass = format_planet_mass_str(planet)
     return '{0} {1} {2}'.format(reliable, letter, mass)
