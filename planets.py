@@ -164,7 +164,7 @@ def ascii_system(system):
         for planet in star.iterfind('planet'):
             sma = float(planet.find('semimajoraxis').text)
             loc = int((sma / maxsma) * 78) + 1
-            t[loc] = '.'
+            t[loc] = planet_name(planet)
         s.append(''.join(t))
     return '\n'.join(s)
     
