@@ -123,7 +123,7 @@ def summarize_planet(planet):
 def summarize_system(system):
     """Prints concise summary of system represented by tree
 
-    :param system: lxml ketree based on <system> tag.
+    :param system: lxml etree based on <system> tag.
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
@@ -131,8 +131,35 @@ def summarize_system(system):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
             s.append('   ' + summarize_planet(planet))
+#    for planet in system.iterfind('planet')
     return '\n'.join(s)
 
+
+def get_max_sma(tree):
+    """Returns max Semi-Major Axis (AU) for all planets in tree.
+
+    :param tree: An lxml etree
+    """
+    allsmas = [float(x.text) for x in tree.findall('.//semimajoraxis')]
+    return max(allsmas)
+
+
+def ascii_system(system):
+    """Return an ASCII graphic of the system.
+
+    :param system: lxml etree based on <system> tag.
+    """
+    s = []
+    maxsma = get_max_sma(system)
+    for star in system.iterfind('star'):
+        t = ' '*80
+        for planet in star.iterfind('planet'):
+            sma = planet.find('semimajoraxis')
+            loc = int(sma / maxsma)
+            t[loc] = '.'
+        s.append(t)
+    return '\n'.join(s)
+    
 
 if __name__ == '__main__':
     tree = get_etree()
@@ -151,3 +178,5 @@ if __name__ == '__main__':
     largest = largest_system(tree)
     write_tree(largest,'largest.xml')
     print summarize_system(largest)
+
+    print ascii_system(largest)
