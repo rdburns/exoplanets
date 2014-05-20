@@ -127,6 +127,7 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
+    s.append(ascii_system(largest))
     for star in system.iterfind('star'):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
@@ -152,12 +153,13 @@ def ascii_system(system):
     s = []
     maxsma = get_max_sma(system)
     for star in system.iterfind('star'):
-        t = ' '*80
+        t = [' ']*80
+        t[0] = '*'
         for planet in star.iterfind('planet'):
-            sma = planet.find('semimajoraxis')
-            loc = int(sma / maxsma)
+            sma = float(planet.find('semimajoraxis').text)
+            loc = int((sma / maxsma) * 78) + 1
             t[loc] = '.'
-        s.append(t)
+        s.append(''.join(t))
     return '\n'.join(s)
     
 
@@ -178,5 +180,5 @@ if __name__ == '__main__':
     largest = largest_system(tree)
     write_tree(largest,'largest.xml')
     print summarize_system(largest)
-
-    print ascii_system(largest)
+    
+    
