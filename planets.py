@@ -6,6 +6,12 @@ import io
 import time
 import cmd
 
+# TODO
+# Some systems have more than one name
+# Binaries don't work well.
+# Alpha Centauri (not circumbinary)
+# Kepler-47 (circumbinary)
+
 try:
     from enum import Enum
 except ImportError:
