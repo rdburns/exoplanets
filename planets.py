@@ -28,6 +28,16 @@ def get_etree():
     return tree
 
 
+def find_system_by_name(name):
+    """Returns system node matching supplied name
+
+    :param name: string containing desired system name.
+    """
+    systems = tree.findall('.//system')
+    names = [system.find('name').text for system in systems]
+    return systems[names.index(name)]
+    
+
 def most_recent_planet(tree):
     """Returns planet node that has most recent update date.
 
@@ -200,7 +210,6 @@ def get_system_names(tree):
 
 
 class PlanetCmd(cmd.Cmd):
-    ()
     def __init__(self, system_names):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
@@ -228,6 +237,9 @@ class PlanetCmd(cmd.Cmd):
         #write_tree(largest,'largest.xml')
         print summarize_system(largest)
 
+    def do_system(self, args):
+        print summarize_system(find_system_by_name(args[0]))
+        
     def do_exit(self, args):
         exit()
         
@@ -235,6 +247,6 @@ class PlanetCmd(cmd.Cmd):
 if __name__ == '__main__':
     tree = get_etree()
     system_names = get_system_names(tree)
-    PlanetCmd().cmdloop(system_names)
+    PlanetCmd(system_names).cmdloop()
     
 
