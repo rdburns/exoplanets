@@ -273,7 +273,8 @@ def ascii_system(system):
 
     :param system: lxml etree based on <system> tag.
     """
-    s = []
+    dots = []
+    names = []
     maxsma = get_max_sma(system)
     for star in system.iterfind('star'):
         t = [' ']*80
@@ -282,8 +283,8 @@ def ascii_system(system):
             sma = float(planet.find('semimajoraxis').text)
             loc = int((sma / maxsma) * 78) + 1
             t[loc] = planet_name(planet)
-        s.append(''.join(t))
-    return '\n'.join(s)
+        names.append(''.join(t))
+    return '\n'.join(names)
 
 
 def tweet_system(system):
