@@ -201,10 +201,11 @@ def get_system_names(tree):
 
 class PlanetCmd(cmd.Cmd):
     ()
-    def __init__(self):
+    def __init__(self, system_names):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
         self.intro = "Exoplanet Explorer (type help commands):"
+        self.system_names = system_names
 
     def do_most_recent_planet(self, args):
         planet = most_recent_planet(tree)
@@ -234,7 +235,6 @@ class PlanetCmd(cmd.Cmd):
 if __name__ == '__main__':
     tree = get_etree()
     system_names = get_system_names(tree)
-    print system_names
-    PlanetCmd().cmdloop()
+    PlanetCmd().cmdloop(system_names)
     
 
