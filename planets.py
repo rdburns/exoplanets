@@ -20,8 +20,15 @@ class PlanetSize(Enum):
     terrestrial = '.'
     neptune = 'o'
     jupiter = 'O'
+    unknown = '?'
          
-    
+
+#Constants
+JUPITER_IN_EARTH_MASSES = 317.828
+NEPTUNE_IN_EARTH_MASSES = 17.147
+JUPITER_IN_EARTH_RADII = 11.209 #equatorial
+NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
+
 
 def demo():
     # Output mass and radius of all planets 
@@ -36,6 +43,66 @@ def demo():
     for system in oec.findall(".//system"):
         print system.findtext("distance"), len(system.findall(".//planet"))
 
+
+def get_planet_radius(planet, multiple='jupiter'):
+    """Returns planet radius as a float times Jupiter Radii
+
+    :param planet: lxml etree node for <planet>
+    :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
+    If earth, will return number of earth masses, etc.
+    """
+    radius_node = planet.find('radius')
+    if radius_node is None:
+        return None
+    jup_radii = float(radius_node.text)
+    if multiple == 'jupiter':
+        return jup_radii
+    elif multiple == 'neptune':
+        return (jup_radii * JUPITER_IN_EARTH_RADII) / NEPTUNE_IN_EARTH_RADII
+    elif multiple == 'earth':
+        return jup_radii * JUPITER_IN_EARTH_RADII
+
+    
+def get_planet_mass(planet, multiple='jupiter'):
+    """Returns planet mass as a float times mass of multiple.
+
+    :param planet: lxml etree node for <planet>
+    :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
+    If earth, will return number of earth masses, etc.
+    """
+    jup_mass = float(planet.find('mass').text)
+    if multiple == 'jupiter':
+        return jup_mass
+    elif multiple == 'neptune':
+        return (jup_mass * JUPITER_IN_EARTH_MASSES) / NEPTUNE_IN_EARTH_MASSES
+    elif multiple == 'earth':
+        return jup_mass * JUPITER_IN_EARTH_MASSES
+
+    
+def get_planet_size(planet):
+    """Returns PlanetSize enum for planet.
+
+    Makes determination based on radius and mass criteria.
+    :param planet: lxml etree node for <planet>
+    """
+    earth_radii = get_planet_radius(planet, 'earth')
+    if earth_radii is not None:
+        if earth_radii < 2:
+            return PlanetSize.terrestrial
+        elif earth_radii > 7:
+            return PlanetSize.jupiter
+        else:
+            return PlanetSize.neptune
+    else:
+        earth_masses = get_planet_mass(planet, 'earth')
+        if earth_masses < 10:
+            return PlanetSize.terrestrial
+        elif earth_masses > 30:
+            return PlanetSize.jupiter
+        else:
+            return PlanetSize.neptune
+    return PlanetSize.unknown    
+    
 
 def get_etree():
     url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
@@ -157,7 +224,7 @@ def format_planet_mass_str(planet):
     if flt_mass < 0.05:
         return 'j' + str(round(flt_mass, 3))
     else:
-        flt_mass = flt_mass * 317.828
+        flt_mass = flt_mass * JUPITER_IN_EARTH_MASSES
         return 'e' + str(round(flt_mass, 3))
     
 
