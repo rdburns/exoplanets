@@ -218,7 +218,10 @@ class PlanetCmd(cmd.Cmd):
         largest = largest_system(tree)
         #write_tree(largest,'largest.xml')
         print summarize_system(largest)
-    
+
+    def do_exit(self, args):
+        exit()
+        
 
 if __name__ == '__main__':
     tree = get_etree()
