@@ -19,7 +19,7 @@ class PlanetSize(Enum):
     The enum value is an ASCII depiction."""
     terrestrial = '.'
     neptune = 'o'
-    jupiter = 'O'
+    jupiter = '@'
     unknown = '?'
          
 
@@ -293,7 +293,8 @@ def tweet_system(system):
     for star in system.iterfind('star'):
         s.append(star.find('name').text)
         for planet in star.iterfind('planet'):
-            s.append('  . ' + planet_name(planet))
+            planet_size = get_planet_size(planet)
+            s.append('  ' + planet_size.value + ' ' + planet_name(planet))
     return '\n'.join(s)
 
 
