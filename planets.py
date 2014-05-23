@@ -220,14 +220,16 @@ def format_planet_mass_str(planet):
     Uses J2.3 for jupiter masses.
     Uses E3.4 for earth masses if under 0.05 jupiter masses.
     """
+    jup_mass = get_planet_mass(planet, 'jupiter')
+    planet_size = get_planet_size(planet)
     flt_mass = float(planet.find('mass').text)
-    if flt_mass < 0.05:
-        return 'j' + str(round(flt_mass, 3))
+    if planet_size.name == 'terrestrial':
+        earth_mass = get_planet_mass(planet, 'earth')
+        return 'e' + str(round(earth_mass, 3))
     else:
-        flt_mass = flt_mass * JUPITER_IN_EARTH_MASSES
-        return 'e' + str(round(flt_mass, 3))
-    
+        return 'j' + str(round(jup_mass, 3))
 
+    
 def summarize_planet(planet):
     """Return one line summary of planet"""
     if planet.find('list').text == "Confirmed planets":
