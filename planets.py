@@ -4,6 +4,7 @@ import urllib
 import gzip
 import io
 import time
+import cmd
 
 
 def demo():
@@ -154,7 +155,7 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
-    s.append(ascii_system(largest))
+    s.append(ascii_system(system))
     for star in system.iterfind('star'):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
@@ -188,25 +189,39 @@ def ascii_system(system):
             t[loc] = planet_name(planet)
         s.append(''.join(t))
     return '\n'.join(s)
+
+
+class PlanetCmd(cmd.Cmd):
+    ()
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        self.prompt = '> '
+        self.intro = "Exoplanet Explorer (type help commands):"
+
+    def do_most_recent_planet(self, args):
+        planet = most_recent_planet(tree)
+        print "Most recently updated planet is " + str(planet.find('name').text)
+        print "  updated on " + planet.find('lastupdate').text
+        print ""
+        print planet.find('description').text
+
+    def do_most_recent_system(self, args):
+        print "Most recently updated system is:"
+        most_recent = most_recent_system(tree)
+        print summarize_system(most_recent)
+
+    def do_stats(self, args):
+        print "Catalog contains " + str(num_planets(tree)) + " planets in " + str(num_systems(tree)) + " systems."
+
+    def do_largest_system(self, args):
+        print "Largest system is:"
+        largest = largest_system(tree)
+        #write_tree(largest,'largest.xml')
+        print summarize_system(largest)
     
 
 if __name__ == '__main__':
     tree = get_etree()
-    planet = most_recent_planet(tree)
+    PlanetCmd().cmdloop()
+    
 
-    print "Most recently updated planet is " + str(planet.find('name').text)
-    print "  updated on " + planet.find('lastupdate').text
-    print ""
-    print planet.find('description').text
-    print ""
-    print "Catalog contains " + str(num_planets(tree)) + " planets in " + str(num_systems(tree)) + " systems."
-    print ""
-    print "Largest system is:"
-    largest = largest_system(tree)
-    write_tree(largest,'largest.xml')
-    print summarize_system(largest)
-
-    print ""
-    print "Most recently updated system is:"
-    most_recent = most_recent_system(tree)
-    print summarize_system(most_recent)
