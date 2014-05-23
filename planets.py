@@ -29,6 +29,8 @@ NEPTUNE_IN_EARTH_MASSES = 17.147
 JUPITER_IN_EARTH_RADII = 11.209 #equatorial
 NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
 
+SYMBOL = {'sun': u'\u2609'}
+
 
 def demo():
     # Output mass and radius of all planets 
@@ -211,7 +213,7 @@ def summarize_star(star):
         name = star.find('name').text[-1]
     else:
         name = ' '
-    return '{0} {1} {2}'.format(name, star.find('spectraltype').text, star.find('mass').text)
+    return u'{0} {1} {2}{3}'.format(name, star.find('spectraltype').text, star.find('mass').text, SYMBOL['sun'])
 
 
 def format_planet_mass_str(planet):
