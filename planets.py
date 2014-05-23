@@ -201,6 +201,19 @@ def ascii_system(system):
     return '\n'.join(s)
 
 
+def tweet_system(system):
+    """Return system summary suitable for a twitter message.
+
+    :param system: lxml etree based on <system> tag.
+    """
+    s = []
+    for star in system.iterfind('star'):
+        s.append(star.find('name').text)
+        for planet in star.iterfind('planet'):
+            s.append('  . ' + planet_name(planet))
+    return '\n'.join(s)
+
+
 def get_system_names(tree):
     """Returns list of all system names.
 
@@ -241,6 +254,12 @@ class PlanetCmd(cmd.Cmd):
     def do_system(self, system_name):
         print summarize_system(find_system_by_name(system_name))
 
+    def do_tweet(self, system_name):
+        print tweet_system(find_system_by_name(system_name))
+
+    def complete_tweet(self, text, line, begidx, endidx):
+        return self.complete_system(text, line, begidx, endidx)
+    
     def complete_system(self, text, line, begidx, endidx):
         if not text:
             completions = self.system_names[:]
