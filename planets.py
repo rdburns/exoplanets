@@ -6,6 +6,22 @@ import io
 import time
 import cmd
 
+try:
+    from enum import Enum
+except ImportError:
+    print "You need the enum backport."
+    print "pip install enum34"
+
+    
+class PlanetSize(Enum):
+    """Defines fuzzy planet size labels.
+
+    The enum value is an ASCII depiction."""
+    terrestrial = '.'
+    neptune = 'o'
+    jupiter = 'O'
+         
+    
 
 def demo():
     # Output mass and radius of all planets 
