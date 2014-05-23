@@ -278,15 +278,23 @@ def ascii_system(system):
     maxsma = get_max_sma(system)
     for star in system.iterfind('star'):
         t = [' ']*80
-        t[0] = '*'
+        d = [' ']*80
+        d[0] = '*'
         for planet in star.iterfind('planet'):
             sma = float(planet.find('semimajoraxis').text)
             loc = int((sma / maxsma) * 78) + 1
             while t[loc] != ' ':
                 loc += 1
             t[loc] = planet_name(planet)
+            d[loc] = get_planet_size(planet).value
         names.append(''.join(t))
-    return '\n'.join(names)
+        dots.append(''.join(d))
+    result = []
+    for idx in range(len(dots)):
+        result.append(dots[idx])
+        result.append(names[idx])
+        result.append('')
+    return '\n'.join(result)
 
 
 def tweet_system(system):
