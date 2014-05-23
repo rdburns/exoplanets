@@ -35,7 +35,7 @@ def find_system_by_name(name):
     """
     systems = tree.findall('.//system')
     names = [system.find('name').text for system in systems]
-    return systems[names.index(name)]
+    return systems[names.index(name.replace('_',' '))]
     
 
 def most_recent_planet(tree):
@@ -206,7 +206,8 @@ def get_system_names(tree):
 
     :param tree: Tree to find systems in.
     """
-    return tree.xpath('./system/name/text()')
+    names = [n.replace(' ','_') for n in tree.xpath('./system/name/text()')]
+    return names
 
 
 class PlanetCmd(cmd.Cmd):
@@ -237,8 +238,18 @@ class PlanetCmd(cmd.Cmd):
         #write_tree(largest,'largest.xml')
         print summarize_system(largest)
 
-    def do_system(self, args):
-        print summarize_system(find_system_by_name(args[0]))
+    def do_system(self, system_name):
+        print summarize_system(find_system_by_name(system_name))
+
+    def complete_system(self, text, line, begidx, endidx):
+        if not text:
+            completions = self.system_names[:]
+        else:
+            completions = [ f
+                            for f in self.system_names
+                            if f.startswith(text)
+                            ]
+        return completions
         
     def do_exit(self, args):
         exit()
