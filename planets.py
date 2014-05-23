@@ -29,7 +29,10 @@ NEPTUNE_IN_EARTH_MASSES = 17.147
 JUPITER_IN_EARTH_RADII = 11.209 #equatorial
 NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
 
-SYMBOL = {'sun': u'\u2609'}
+SYMBOL = {'sun': u'\u2609',
+          'earth': u'\u2295',
+          'neptune': u'\u2646',
+          'jupiter': u'\u2643'}
 
 
 def demo():
@@ -213,7 +216,7 @@ def summarize_star(star):
         name = star.find('name').text[-1]
     else:
         name = ' '
-    return u'{0} {1} {2}{3}'.format(name, star.find('spectraltype').text, star.find('mass').text, SYMBOL['sun'])
+    return u'{0} {1} {2}{3}'.format(name, star.find('spectraltype').text, star.find('mass').text, 'M'+SYMBOL['sun'])
 
 
 def format_planet_mass_str(planet):
@@ -226,11 +229,12 @@ def format_planet_mass_str(planet):
     planet_size = get_planet_size(planet)
     flt_mass = float(planet.find('mass').text)
     if planet_size.name == 'terrestrial':
-        earth_mass = get_planet_mass(planet, 'earth')
-        return 'e' + str(round(earth_mass, 3))
+        use_mass = get_planet_mass(planet, 'earth')
+        symbol = SYMBOL['earth']
     else:
-        return 'j' + str(round(jup_mass, 3))
-
+        use_mass = jup_mass
+        symbol = SYMBOL['jupiter']
+    return u'{:0.3f}M{}'.format(round(use_mass, 3), symbol)
     
 def summarize_planet(planet):
     """Return one line summary of planet"""
@@ -242,7 +246,7 @@ def summarize_planet(planet):
     letter = planet_name(planet)
 
     mass = format_planet_mass_str(planet)
-    return '{0} {1} {2}'.format(reliable, letter, mass)
+    return u'{0} {1} {2}'.format(reliable, letter, mass)
 
 
 def summarize_system(system):
