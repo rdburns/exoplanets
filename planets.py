@@ -27,7 +27,7 @@ def get_etree():
     return tree
 
 
-def most_recent(tree):
+def most_recent_planet(tree):
     """Returns planet node that has most recent update date.
 
     :param tree: lxml etree
@@ -38,6 +38,27 @@ def most_recent(tree):
     planet = updates[update_time.index(max(update_time))].getparent()
     return planet
 
+
+def most_recent_system(tree):
+    """Returns system with most recently updated planet.
+
+    :param tree: lxml etree
+    """
+    planet = most_recent_planet(tree)
+    return get_parent_tag(planet, 'system')
+
+
+def get_parent_tag(node, tag):
+    """Traverses up the tree from node until it finds tag and then returns that node.
+
+    :param node: The child node to start the search from
+    :param tag: String with tag type we're searching for.
+    """
+    if node.tag == tag:
+        return node
+    else:
+        return get_parent_tag(node.getparent(), tag)
+    
 
 def num_planets(tree):
     """Returns the total number of planets in the tree
@@ -171,9 +192,7 @@ def ascii_system(system):
 
 if __name__ == '__main__':
     tree = get_etree()
-    planet = most_recent(tree)
-
-
+    planet = most_recent_planet(tree)
 
     print "Most recently updated planet is " + str(planet.find('name').text)
     print "  updated on " + planet.find('lastupdate').text
@@ -188,6 +207,6 @@ if __name__ == '__main__':
     print summarize_system(largest)
 
     print ""
-    print "Most recently updated:"
-    print most_recent(tree)
-    print summarize_system(most_recent(tree))
+    print "Most recently updated system is:"
+    most_recent = most_recent_system(tree)
+    print summarize_system(most_recent)
