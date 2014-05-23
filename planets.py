@@ -191,6 +191,14 @@ def ascii_system(system):
     return '\n'.join(s)
 
 
+def get_system_names(tree):
+    """Returns list of all system names.
+
+    :param tree: Tree to find systems in.
+    """
+    return tree.xpath('./system/name/text()')
+
+
 class PlanetCmd(cmd.Cmd):
     ()
     def __init__(self):
@@ -225,6 +233,8 @@ class PlanetCmd(cmd.Cmd):
 
 if __name__ == '__main__':
     tree = get_etree()
+    system_names = get_system_names(tree)
+    print system_names
     PlanetCmd().cmdloop()
     
 
