@@ -346,6 +346,7 @@ def ascii_system(system):
         t = [' ']*80
         d = [' ']*80
         d[0] = spectral_colorize('*', star)
+        t[0] = star.find('name').text[-1]
         for planet in star.iterfind('planet'):
             sma = float(planet.find('semimajoraxis').text)
             loc = int((sma / maxsma) * 78) + 1
