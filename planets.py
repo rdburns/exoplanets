@@ -429,7 +429,7 @@ class PlanetCmd(cmd.Cmd):
         else:
             completions = [ f
                             for f in self.system_names
-                            if f.startswith(text)
+                            if f.lower().startswith(text.lower())
                             ]
         return completions
         
