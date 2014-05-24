@@ -10,7 +10,6 @@ import cmd
 # TODO
 # Some systems have more than one name
 # Binaries don't work well.
-# Alpha Centauri (not circumbinary)
 # Kepler-47 (circumbinary)
 # There's something weird with the system name autocomplete
 
@@ -320,8 +319,9 @@ def summarize_system(system):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
             s.append('   ' + summarize_planet(planet))
+    s.append(' <-> circumbinary planets:')
     for planet in system.iterfind('planet'):
-        print "circumbinary"
+        s.append('   ' + summarize_planet(planet))
     return '\n'.join(s)
 
 
