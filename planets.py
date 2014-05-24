@@ -300,11 +300,12 @@ def summarize_planet(planet):
 def summarize_system(system):
     """Prints concise summary of system represented by tree
 
-    :param system: lxml etree based on <system> tag.
+    :param system: ommi clxml etree based on <system> tag.
     """
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
     s.append(ascii_system(system))
+    s.append('')
     binary = system.find('binary')
     if binary is not None:
         system = binary
@@ -334,7 +335,7 @@ def ascii_system(system):
     dots = []
     names = []
     maxsma = get_max_sma(system)
-    for star in system.iterfind('star'):
+    for star in system.xpath('.//star'):
         t = [' ']*80
         d = [' ']*80
         d[0] = '*'
@@ -351,7 +352,6 @@ def ascii_system(system):
     for idx in range(len(dots)):
         result.append(dots[idx])
         result.append(names[idx])
-        result.append('')
     return '\n'.join(result)
 
 
