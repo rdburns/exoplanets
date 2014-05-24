@@ -244,6 +244,17 @@ def planet_name(planet):
     return planet.find('name').text.split(' ')[-1]
 
 
+def spectral_colorize(s, star):
+    """Returns string s with spectral color colorama codes
+    """
+    spectral = star.find('spectraltype').text
+    stellarclass = spectral[0]
+    if stellarclass in STARCOLOR.keys():
+        return STARCOLOR[stellarclass] + s + RSTCOLOR
+    else:
+        return s
+
+
 def spectral_name(star):
     """Retruns string containing spectral name of star, with colorama color
 
@@ -251,11 +262,7 @@ def spectral_name(star):
     :param star: lxml etree on <star> node
     """
     spectral = star.find('spectraltype').text
-    stellarclass = spectral[0]
-    if stellarclass in STARCOLOR.keys():
-        return STARCOLOR[stellarclass] + spectral + RSTCOLOR
-    else:
-        return spectral
+    return spectral_colorize(spectral, star)
     
 
 def summarize_star(star):
