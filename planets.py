@@ -107,7 +107,10 @@ def get_planet_mass(planet, multiple='jupiter'):
     :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
     If earth, will return number of earth masses, etc.
     """
-    jup_mass = float(planet.find('mass').text)
+    if planet.find('mass') is not None:
+        jup_mass = float(planet.find('mass').text)
+    else:
+        return None
     if multiple == 'jupiter':
         return jup_mass
     elif multiple == 'neptune':
@@ -279,15 +282,18 @@ def format_planet_mass_str(planet):
     Uses E3.4 for earth masses if under 0.05 jupiter masses.
     """
     jup_mass = get_planet_mass(planet, 'jupiter')
-    planet_size = get_planet_size(planet)
-    flt_mass = float(planet.find('mass').text)
-    if planet_size.name == 'terrestrial':
-        use_mass = get_planet_mass(planet, 'earth')
-        symbol = SYMBOL['earth']
+    if jup_mass is None:
+        return '  ?M{}'.format(SYMBOL['jupiter'])
     else:
-        use_mass = jup_mass
-        symbol = SYMBOL['jupiter']
-    return u'{:0.3f}M{}'.format(round(use_mass, 3), symbol)
+        planet_size = get_planet_size(planet)
+        flt_mass = float(planet.find('mass').text)
+        if planet_size.name == 'terrestrial':
+            use_mass = get_planet_mass(planet, 'earth')
+            symbol = SYMBOL['earth']
+        else:
+            use_mass = jup_mass
+            symbol = SYMBOL['jupiter']
+        return u'{:0.3f}M{}'.format(round(use_mass, 3), symbol)
     
 def summarize_planet(planet):
     """Return one line summary of planet"""
