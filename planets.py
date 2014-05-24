@@ -153,9 +153,9 @@ def find_system_by_name(name):
 
     :param name: string containing desired system name.
     """
-    systems = tree.findall('.//system')
-    names = [system.find('name').text for system in systems]
-    return systems[names.index(name.replace('_',' '))]
+    system_name = name.replace('_',' ')
+    target = tree.xpath('.//system/name[text()="'+system_name+'"]')
+    return get_parent_tag(target[0], 'system')
     
 
 def most_recent_planet(tree):
