@@ -318,7 +318,8 @@ def summarize_system(system):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
             s.append('   ' + summarize_planet(planet))
-    s.append(' <-> circumbinary planets:')
+    if system.find('planet') is not None:
+        s.append(' (..) circumbinary planets:')
     for planet in system.iterfind('planet'):
         s.append('   ' + summarize_planet(planet))
     return '\n'.join(s)
