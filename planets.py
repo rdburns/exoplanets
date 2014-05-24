@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import sys
 from lxml import etree
 import urllib
 import gzip
@@ -17,6 +18,13 @@ try:
 except ImportError:
     print "You need the enum backport."
     print "pip install enum34"
+
+try:
+    from colorama import Fore, Back, Style, init
+    init()
+except ImportError:
+    # colorama support is optional.
+    pass
 
     
 class PlanetSize(Enum):
@@ -40,6 +48,25 @@ SYMBOL = {'sun': u'\u2609',
           'neptune': u'\u2646',
           'jupiter': u'\u2643'}
 
+if not sys.modules.has_key('colorama'):
+    # Doesn't wreck things if colorama isn't installed.
+    STARCOLOR = {'O': '',
+                 'B': '',
+                 'A': '',
+                 'F': '',
+                 'G': '',
+                 'K': '',
+                 'M': ''}
+    RSTCOLOR = ''
+else:
+    STARCOLOR = {'O': Fore.MAGENTA + Style.BRIGHT,
+                 'B': Fore.BLUE + Style.BRIGHT,
+                 'A': Fore.WHITE + Style.BRIGHT,
+                 'F': Fore.YELLOW + Style.BRIGHT,
+                 'G': Fore.YELLOW, 
+                 'K': Fore.RED + Back.YELLOW,
+                 'M': Fore.RED}
+    RSTCOLOR = Fore.RESET + Style.RESET_ALL
 
 def demo():
     # Output mass and radius of all planets 
@@ -214,6 +241,20 @@ def planet_name(planet):
     """Returns name of planet, just letter.
     """
     return planet.find('name').text.split(' ')[-1]
+
+
+def spectral_name(star):
+    """Retruns string containing spectral name of star, with colorama color
+
+    Doesn't include ANSII code if colorama is not installed.
+    :param star: lxml etree on <star> node
+    """
+    spectral = star.find('spectraltype').text
+    stellarclass = spectral[0]
+    if stellarclass in STARCOLOR.keys():
+        return STARCOLOR[stellarclass] + spectral + RSTCOLOR
+    else:
+        return spectral
     
 
 def summarize_star(star):
@@ -222,7 +263,7 @@ def summarize_star(star):
         name = star.find('name').text[-1]
     else:
         name = ' '
-    return u'{0} {1} {2}{3}'.format(name, star.find('spectraltype').text, star.find('mass').text, 'M'+SYMBOL['sun'])
+    return u'{0} {1} {2}{3}'.format(name, spectral_name(star), star.find('mass').text, 'M'+SYMBOL['sun'])
 
 
 def format_planet_mass_str(planet):
