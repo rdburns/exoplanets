@@ -9,8 +9,7 @@ import cmd
 
 # TODO
 # Some systems have more than one name
-# Binaries don't work well.
-# Kepler-47 (circumbinary)
+# Kepler-47 (circumbinary) has an error I think because there's no mass
 # There's something weird with the system name autocomplete
 
 try:
@@ -19,7 +18,7 @@ except ImportError:
     print "You need the enum backport."
     print "pip install enum34"
 
-try:
+try: 
     from colorama import Fore, Back, Style, init
     init()
 except ImportError:
@@ -65,7 +64,7 @@ else:
                  'F': Fore.YELLOW + Style.BRIGHT,
                  'G': Fore.YELLOW + Style.BRIGHT, 
                  'K': Fore.YELLOW,
-                 'M': Fore.RED}
+                 'M': Fore.RED + Style.BRIGHT}
     RSTCOLOR = Fore.RESET + Style.RESET_ALL
 
 def demo():
