@@ -64,8 +64,8 @@ else:
                  'B': Fore.BLUE + Style.BRIGHT,
                  'A': Fore.WHITE + Style.BRIGHT,
                  'F': Fore.YELLOW + Style.BRIGHT,
-                 'G': Fore.YELLOW, 
-                 'K': Fore.RED + Back.YELLOW,
+                 'G': Fore.YELLOW + Style.BRIGHT, 
+                 'K': Fore.YELLOW,
                  'M': Fore.RED}
     RSTCOLOR = Fore.RESET + Style.RESET_ALL
 
