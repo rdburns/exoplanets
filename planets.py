@@ -283,7 +283,7 @@ def format_planet_mass_str(planet):
     """
     jup_mass = get_planet_mass(planet, 'jupiter')
     if jup_mass is None:
-        return '  ?M{}'.format(SYMBOL['jupiter'])
+        return u'  ?M{}'.format(SYMBOL['jupiter'])
     else:
         planet_size = get_planet_size(planet)
         flt_mass = float(planet.find('mass').text)
