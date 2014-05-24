@@ -12,6 +12,7 @@ import cmd
 # Binaries don't work well.
 # Alpha Centauri (not circumbinary)
 # Kepler-47 (circumbinary)
+# There's something weird with the system name autocomplete
 
 try:
     from enum import Enum
@@ -304,11 +305,15 @@ def summarize_system(system):
     s = []
     s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
     s.append(ascii_system(system))
+    binary = system.find('binary')
+    if binary is not None:
+        system = binary
     for star in system.iterfind('star'):
         s.append(' ' + summarize_star(star))
         for planet in star.iterfind('planet'):
             s.append('   ' + summarize_planet(planet))
-#    for planet in system.iterfind('planet')
+    for planet in system.iterfind('planet'):
+        print "circumbinary"
     return '\n'.join(s)
 
 
