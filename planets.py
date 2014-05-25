@@ -334,8 +334,20 @@ def format_disc_method(method):
         return 'rv'
     elif method == 'microlensing':
         return u'\u03BC'+'lens'
-    
-    
+
+
+def format_planet_sma_str(planet):
+    """Returns string describing Orbit"""
+    sma = float(planet.find('semimajoraxis').text)
+    return '{:0.3f}AU'.format(sma)
+
+
+def format_planet_period_str(planet):
+    """Returns string describing Orbit"""
+    period = float(planet.find('period').text)
+    return '{:0.2f}d'.format(period)
+
+
 def summarize_planet(planet):
     """Return one line summary of planet"""
     if planet.find('list').text == "Confirmed planets":
@@ -348,9 +360,12 @@ def summarize_planet(planet):
     mass = format_planet_mass_str(planet)
     radius = format_planet_radius_str(planet)
     temp = format_planet_temp_str(planet)
+    sma = format_planet_sma_str(planet)
+    period = format_planet_period_str(planet)
     method = format_disc_method(planet.find('discoverymethod').text)
-    return u'{} {} {:>8} {:>8} {:>8} {}'.format(reliable, letter,
-                                         mass, radius, temp, method)
+    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(reliable, letter,
+                                         mass, radius, sma, period, temp, 
+                                         method)
 
 
 def convert_pc_to_ly(pc):
