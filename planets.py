@@ -262,7 +262,7 @@ def spectral_name(star):
     """
     spectral = star.find('spectraltype').text
     return spectral_colorize(spectral, star)
-    
+
 
 def summarize_star(star):
     """return one line summary of star"""
@@ -337,13 +337,39 @@ def summarize_planet(planet):
                                          mass, radius, temp)
 
 
+def convert_pc_to_ly(pc):
+    """Converts distance in parsecs into lightyears and returns integer."""
+    return pc * 3.2615638
+
+
+def system_coord_str(system):
+    """Return String representing sky coordinates
+
+    :param system: lxml etree at system node"""
+    ra = system.find('rightascension').text.split(' ')
+    dec = system.find('declination').text.split(' ')
+    distance = system.find('distance')
+    if distance is not None:
+        dist_flt = float(distance.text)
+        dist_str = '{:0.1f} pc / {:0.1f} ly'.format(dist_flt,
+                                          convert_pc_to_ly(dist_flt))
+    else:
+        dist_str = ''
+        
+    return ('RA:' + ra[0] + 'h' + ra[1] + 'm' + ra[0] + 's' +
+            ' DEC:' + dec[0] + u'\u00B0' + dec[1] + "'" + dec[2] + '"' +
+            ' ' + dist_str
+            )
+
+
 def summarize_system(system):
     """Prints concise summary of system represented by tree
 
     :param system: ommi clxml etree based on <system> tag.
     """
     s = []
-    s.append(system.find('name').text + ' - ' + str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
+    s.append(system.find('name').text + ' - ' + system_coord_str(system))
+    s.append(str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
     s.append(ascii_system(system))
     s.append('')
     binary = system.find('binary')
