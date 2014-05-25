@@ -246,8 +246,10 @@ def planet_name(planet):
 def spectral_colorize(s, star):
     """Returns string s with spectral color colorama codes
     """
-    spectral = star.find('spectraltype').text
-    stellarclass = spectral[0]
+    spectral = star.find('spectraltype')
+    if spectral is None:
+        return s
+    stellarclass = spectral.text[0]
     if stellarclass in STARCOLOR.keys():
         return STARCOLOR[stellarclass] + s + RSTCOLOR
     else:
@@ -260,8 +262,11 @@ def spectral_name(star):
     Doesn't include ANSII code if colorama is not installed.
     :param star: lxml etree on <star> node
     """
-    spectral = star.find('spectraltype').text
-    return spectral_colorize(spectral, star)
+    spectral = star.find('spectraltype')
+    if spectral is not None:
+        return spectral_colorize(spectral.text, star)
+    else:
+        return ''
 
 
 def summarize_star(star):
@@ -320,6 +325,16 @@ def format_planet_temp_str(planet):
     else:
         return ''
 
+
+def format_disc_method(method):
+    """Takes discovery method string and abbreviates it."""
+    if method == 'transit':
+        return 'trn'
+    elif method == 'RV':
+        return 'rv'
+    elif method == 'microlensing':
+        return u'\u03BC'+'lens'
+    
     
 def summarize_planet(planet):
     """Return one line summary of planet"""
@@ -333,8 +348,9 @@ def summarize_planet(planet):
     mass = format_planet_mass_str(planet)
     radius = format_planet_radius_str(planet)
     temp = format_planet_temp_str(planet)
-    return u'{} {} {:>8} {:>8} {:>8}'.format(reliable, letter,
-                                         mass, radius, temp)
+    method = format_disc_method(planet.find('discoverymethod').text)
+    return u'{} {} {:>8} {:>8} {:>8} {}'.format(reliable, letter,
+                                         mass, radius, temp, method)
 
 
 def convert_pc_to_ly(pc):
