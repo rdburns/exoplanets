@@ -8,8 +8,6 @@ import time
 import cmd
 
 # TODO
-# Some systems have more than one name
-# Kepler-47 (circumbinary) has an error I think because there's no mass
 # There's something weird with the system name autocomplete
 
 try:
@@ -295,6 +293,34 @@ def format_planet_mass_str(planet):
             symbol = SYMBOL['jupiter']
         return u'{:0.3f}M{}'.format(round(use_mass, 3), symbol)
     
+
+def format_planet_radius_str(planet):
+    """Takes float multiple of Jupiter radius, and returns it rounded and prefixed.
+
+    """
+    jup_radius = get_planet_radius(planet, 'jupiter')
+    if jup_radius is None:
+        return u'  ?R{}'.format(SYMBOL['jupiter'])
+    else:
+        planet_size = get_planet_size(planet)
+        flt_radius = float(planet.find('radius').text)
+        if planet_size.name == 'terrestrial':
+            use_radius = get_planet_radius(planet, 'earth')
+            symbol = SYMBOL['earth']
+        else:
+            use_radius = jup_radius
+            symbol = SYMBOL['jupiter']
+        return u'{:0.3f}R{}'.format(round(use_radius, 3), symbol)
+
+
+def format_planet_temp_str(planet):
+    temp = planet.find('temperature')
+    if temp is not None:
+        return temp.text + 'K'
+    else:
+        return ''
+
+    
 def summarize_planet(planet):
     """Return one line summary of planet"""
     if planet.find('list').text == "Confirmed planets":
@@ -305,7 +331,10 @@ def summarize_planet(planet):
     letter = planet_name(planet)
 
     mass = format_planet_mass_str(planet)
-    return u'{0} {1} {2}'.format(reliable, letter, mass)
+    radius = format_planet_radius_str(planet)
+    temp = format_planet_temp_str(planet)
+    return u'{} {} {:>8} {:>8} {:>8}'.format(reliable, letter,
+                                         mass, radius, temp)
 
 
 def summarize_system(system):
