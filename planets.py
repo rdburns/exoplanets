@@ -217,22 +217,16 @@ def num_planets(tree):
     return int(tree.xpath("count(.//planet)"))
 
 
-def num_stars(tree):
-    """Returns the total number of stars in the tree
+def num_tags(tree, tag):
+    """Returns the total number of tags in the tree of name tag
 
+    Example, count planets: num_tags(tree, 'planet')
+    
     :param tree: lxml etree
-    :returns: integer representing number of planets.
+    :param tag: string containing <tag> name.
+    :returns: integer representing number of tags found.
     """
-    return int(tree.xpath("count(.//star)"))
-
-
-def num_systems(tree):
-    """Returns the total number of systems in the tree
-
-    :param tree: lxml etree
-    :returns: integer representing number of planets.
-    """
-    return int(tree.xpath("count(.//system)"))
+    return int(tree.xpath("count(.//" + tag + ")"))
 
 
 def largest_system(tree):
@@ -241,7 +235,7 @@ def largest_system(tree):
     :param tree: lxml etree
     :returns: lxml etree centered on system with the mode planets.
     """
-    system_size = [num_planets(system) for system in tree.xpath(".//system")]
+    system_size = [num_tags(system, 'planet') for system in tree.xpath(".//system")]
     largest_idx = system_size.index(max(system_size))
     root = tree.xpath("//systems")[0]
     return root[largest_idx]
@@ -416,7 +410,7 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + system_coord_str(system))
-    s.append(str(num_stars(system)) + ' stars - ' + str(num_planets(system)) + ' planets')
+    s.append(str(num_stars(system)) + ' stars - ' + str(num_tags(system, 'planet')) + ' planets')
     s.append(ascii_system(system))
     s.append('')
     binary = system.find('binary')
@@ -533,16 +527,18 @@ class PlanetCmd(cmd.Cmd):
 
     def do_most_recent_system(self, args):
         print "Most recently updated system is:"
-        most_recent = most_recent_system(tree)s
+        most_recent = most_recent_system(tree)
         print summarize_system(most_recent)
 
     def help_most_recent_system(self):
         print "Shows most recently updated system."
         
     def do_stats(self, args):
-        print str(num_planets(tree)) + " planets"
-        print str(num_systems(tree)) + " systems"
-
+        print str(num_tags(tree, 'system')) + " systems"
+        print str(num_tags(tree, 'star')) + " stars"
+        print str(num_tags(tree, 'binary')) + " binaries"
+        print str(num_tags(tree, 'planet')) + " planets"
+        
     def do_largest_system(self, args):
         print "Largest system is:"
         largest = largest_system(tree)
