@@ -21,7 +21,7 @@ try:
     init()
 except ImportError:
     # colorama support is optional.
-    pass
+    print "pip install colorama to get colors for stellar classes, etc."
 
     
 class PlanetSize(Enum):
