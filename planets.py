@@ -81,19 +81,6 @@ else:
                  'M': Fore.RED + Style.BRIGHT}
     RSTCOLOR = Fore.RESET + Style.RESET_ALL
 
-def demo():
-    # Output mass and radius of all planets 
-    for planet in oec.findall(".//planet"):
-        print [planet.findtext("mass"), planet.findtext("radius")]
-
-    # Find all circumbinary planets 
-    for planet in oec.findall(".//binary/planet"):
-        print planet.findtext("name")
-
-    # Output distance to planetary system (in pc, if known) and number of planets in system
-    for system in oec.findall(".//system"):
-        print system.findtext("distance"), len(system.findall(".//planet"))
-
 
 def get_planet_radius(planet, multiple='jupiter'):
     """Returns planet radius as a float times Jupiter Radii
