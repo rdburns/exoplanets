@@ -3,6 +3,7 @@
 
 Ryan Burns
 rdburns@gmail.com
+http://twitter.com/ryanburns
 """
 
 import sys
