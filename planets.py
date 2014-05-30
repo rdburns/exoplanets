@@ -521,7 +521,7 @@ class PlanetCmd(cmd.Cmd):
     def __init__(self, system_names):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
-        self.intro = "Exoplanet Explorer (type help commands):"
+        self.intro = "Exoplanet Explorer (type help):"
         self.system_names = system_names
 
     def do_most_recent_planet(self, args):
@@ -533,11 +533,15 @@ class PlanetCmd(cmd.Cmd):
 
     def do_most_recent_system(self, args):
         print "Most recently updated system is:"
-        most_recent = most_recent_system(tree)
+        most_recent = most_recent_system(tree)s
         print summarize_system(most_recent)
 
+    def help_most_recent_system(self):
+        print "Shows most recently updated system."
+        
     def do_stats(self, args):
-        print "Catalog contains " + str(num_planets(tree)) + " planets in " + str(num_systems(tree)) + " systems."
+        print str(num_planets(tree)) + " planets"
+        print str(num_systems(tree)) + " systems"
 
     def do_largest_system(self, args):
         print "Largest system is:"
@@ -545,11 +549,22 @@ class PlanetCmd(cmd.Cmd):
         #write_tree(largest,'largest.xml')
         print summarize_system(largest)
 
+    def help_largest_system(self):
+        print "Shows summary of system with most plenets."
+
     def do_system(self, system_name):
         print summarize_system(find_system_by_name(system_name))
 
+    def help_system(self):
+        print "system <systen_name>"
+        print "Will print system summary of supplied system, will autocomplete system names with tab."
+        
     def do_tweet(self, system_name):
         print tweet_system(find_system_by_name(system_name))
+
+    def help_tweet(self):
+        print "Shows twitter compatible (140 character) view of system, could "
+        print "be used to tweet new systems or that kind of thing, still in development."
 
     def complete_tweet(self, text, line, begidx, endidx):
         return self.complete_system(text, line, begidx, endidx)
