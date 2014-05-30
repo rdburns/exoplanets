@@ -12,7 +12,7 @@ Requirements
 Usage
 -----
 
-Run ./planets.py
+> python planets.py
 Uses Python Cmd module to let you query exoplanet catalog.
 Try:
 
