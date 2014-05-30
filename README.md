@@ -1,7 +1,9 @@
 Planets
 =======
 
-Commandline app for exoplanet catalog.
+Commandline app for the Open Exoplanet Catalog.
+http://www.openexoplanetcatalogue.com/
+
 When you view a system it will show:
 * key physical parameters.
 * ascii art view of system with sol system symbols overlaid for scale.
