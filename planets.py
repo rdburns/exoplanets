@@ -1,4 +1,10 @@
 #!/usr/bin/python
+"""Open Exoplanet Catalog Explorer
+
+Ryan Burns
+rdburns@gmail.com
+"""
+
 import sys
 from lxml import etree
 import urllib
