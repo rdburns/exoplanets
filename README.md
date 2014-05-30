@@ -2,6 +2,10 @@ Planets
 =======
 
 Commandline app for exoplanet catalog.
+When you view a system it will show:
+* key physical parameters.
+* ascii art view of system with sol system symbols overlaid for scale.
+* approriately colored spectral class
 
 Requirements
 ------------
