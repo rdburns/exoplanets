@@ -27,6 +27,21 @@ Try:
 
 > system Alpha_Centauri
 
+    Kepler-47 - RA:19h41m19s DEC:+46°55'13" 1189.0 pc / 3878.0 ly
+    2 stars - 2 planets
+    ☉                              ☿                          ♀                     
+    *                                                                               
+    A                                                                               
+    *                                                                               
+    B                                                                               
+     
+     A G 1.043M☉
+     B G 0.362M☉
+     (..) circumbinary planets:
+         b      ?M♃  0.272R♃  0.296AU   49.51d   448.8K trn
+         c      ?M♃  0.420R♃  0.989AU  303.16d   245.3K trn
+
+
 > largest_system
 
     Largest system is:
