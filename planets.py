@@ -172,6 +172,8 @@ def find_system_by_name(name):
     """
     system_name = name.replace('_',' ')
     target = tree.xpath('.//system/name[text()="'+system_name+'"]')
+    if target == []:
+        return None
     return get_parent_tag(target[0], 'system')
     
 
@@ -515,7 +517,7 @@ class PlanetCmd(cmd.Cmd):
     def __init__(self, system_names):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
-        self.intro = "Exoplanet Explorer (type help):"
+        self.intro = "Exoplanet Explorer (type help, tab autocompletes commmands and system names):"
         self.system_names = system_names
 
     def do_most_recent_planet(self, args):
@@ -549,14 +551,22 @@ class PlanetCmd(cmd.Cmd):
         print "Shows summary of system with most plenets."
 
     def do_system(self, system_name):
-        print summarize_system(find_system_by_name(system_name))
+        system = find_system_by_name(system_name)
+        if system is None:
+            print "Supply system name as argument, you can use tab to autocomplete."
+        else:
+            print summarize_system(system)
 
     def help_system(self):
         print "system <systen_name>"
         print "Will print system summary of supplied system, will autocomplete system names with tab."
         
     def do_tweet(self, system_name):
-        print tweet_system(find_system_by_name(system_name))
+        system = find_system_by_name(system_name)
+        if system is None:
+            print "Supply system name as argument, you can use tab to autocomplete."
+        else:
+            print tweet_system(system)
 
     def help_tweet(self):
         print "Shows twitter compatible (140 character) view of system, could "
