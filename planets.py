@@ -410,7 +410,7 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + system_coord_str(system))
-    s.append(str(num_stars(system)) + ' stars - ' + str(num_tags(system, 'planet')) + ' planets')
+    s.append(str(num_tags(system, 'star')) + ' stars - ' + str(num_tags(system, 'planet')) + ' planets')
     s.append(ascii_system(system))
     s.append('')
     binary = system.find('binary')
