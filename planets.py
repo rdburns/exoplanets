@@ -41,9 +41,25 @@ JUPITER_IN_EARTH_RADII = 11.209 #equatorial
 NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
 
 SYMBOL = {'sun': u'\u2609',
+          'mercury': u'\u263F',
+          'venus':u'\u2640',
           'earth': u'\u2295',
+          'mars': u'\u2642',
           'neptune': u'\u2646',
-          'jupiter': u'\u2643'}
+          'jupiter': u'\u2643',
+          'saturn': u'\u2644',
+          'uranus': u'\u26E2'}
+
+# In AUs:
+SMA = {'mercury': 0.387,
+       'venus':0.727,
+       'earth': 1.0,
+       'mars': 1.524,
+       'neptune': 30.104,
+       'jupiter': 5.204,
+       'saturn': 9.582,
+       'uranus': 19.299}
+
 
 if not sys.modules.has_key('colorama'):
     # Doesn't wreck things if colorama isn't installed.
@@ -431,9 +447,29 @@ def ascii_system(system):
 
     :param system: lxml etree based on <system> tag.
     """
+    def check_sol(maxsma, planet_str, sol):
+        """Inserts planet symbol into ascii art list 'sol' and returns it.
+        """
+        if maxsma > SMA[planet_str]:
+            loc = int((SMA[planet_str] / maxsma) * 78) + 1
+            sol[loc] = SYMBOL[planet_str]
+        sol[0] = SYMBOL['sun']
+        return sol
+
+    def make_sol(maxsma):
+        """Returns depiction of our solar system at same scale."""
+        sol = [' ']*80
+        for planet in SMA:
+            sol = check_sol(maxsma, planet, sol)
+        return ''.join(sol)
+    
+
     dots = []
     names = []
     maxsma = get_max_sma(system)
+
+    sol = make_sol(maxsma)
+    
     binary = system.find('binary')
     for star in system.xpath('.//star'):
         t = [' ']*80
@@ -451,6 +487,7 @@ def ascii_system(system):
         names.append(''.join(t))
         dots.append(''.join(d))
     result = []
+    result.append(sol)
     for idx in range(len(dots)):
         result.append(dots[idx])
         result.append(names[idx])
