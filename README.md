@@ -6,7 +6,7 @@ Commandline app for exoplanet catalog.
 Requirements
 ------------
 
-* pip install ennum34
+* pip install enum34
 * pip install colorama (optional, but nice!)
 
 Usage
