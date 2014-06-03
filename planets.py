@@ -431,7 +431,7 @@ def format_inclination_str(planet):
     if incnode is None:
         return ''
     else:
-        return '{:0.2f}{}'.format(float(incnode.text), SYMBOL['degrees'])
+        return u'{:0.2f}{}'.format(float(incnode.text), SYMBOL['degrees'])
 
 
 def summarize_planet(planet):
