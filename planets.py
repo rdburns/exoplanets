@@ -120,8 +120,9 @@ def get_planet_mass(planet, multiple='jupiter'):
     :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
     If earth, will return number of earth masses, etc.
     """
-    if planet.find('mass') is not None:
-        jup_mass = float(planet.find('mass').text)
+    massnode = planet.find('mass')
+    if massnode is not None and massnode.text is not None:
+        jup_mass = float(massnode.text)
     else:
         return None
     if multiple == 'jupiter':
