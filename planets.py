@@ -416,14 +416,18 @@ def format_planet_sma_str(planet):
 
 def format_planet_period_str(planet):
     """Returns string describing Orbit"""
-    period = float(planet.find('period').text)
+    pernode = planet.find('period')
+    if pernode is None:
+        return ''
+    else:
+        period = float(pernode.text)
     return '{:0.2f}d'.format(period)
 
 
 def format_eccentricity_str(planet):
     """Returns string describing eccentricity"""
     eccnode = planet.find('eccentricity')
-    if eccnode is None:
+    if eccnode is None or eccnode.text is None:
         return ''
     else:
         return SYMBOL['eccentricity'] + '={:0.2f}'.format(float(eccnode.text))
@@ -432,7 +436,7 @@ def format_eccentricity_str(planet):
 def format_inclination_str(planet):
     """Returns string describing inclination"""
     incnode = planet.find('inclination')
-    if incnode is None:
+    if incnode is None or incnode.text is None:
         return ''
     else:
         return u'{:0.2f}{}'.format(float(incnode.text), SYMBOL['degrees'])
