@@ -275,13 +275,62 @@ def spectral_name(star):
         return ''
 
 
+def format_body_temp_str(body):
+    """Returns temperature string 273K for any body with a temperature
+    tag.
+    """
+    temp = body.find('temperature')
+    if temp is not None:
+        return temp.text + 'K'
+    else:
+        return ''
+
+
+def format_star_mass_str(star):
+    """Returns string of form 1.324M{sunsymbol}
+    """
+    mass = star.find('mass')
+    if mass is not None:
+        mass = mass.text
+    else:
+        mass = '?'
+    return u'{}{}'.format(mass, 'M'+SYMBOL['sun'])
+
+
+def format_star_radius_str(star):
+    """Returns string of form 1.324M{sunsymbol}
+    """
+    radius = star.find('radius')
+    if radius is not None:
+        radius = radius.text
+    else:
+        radius = '?'
+    return u'{}{}'.format(radius, 'R'+SYMBOL['sun'])
+
+
+def format_star_metal_str(star):
+    """Returns metallicity value relative to Sol
+    """
+    metallicity = star.find('metallicity')
+    if metallicity is not None:
+        metallicity = metallicity.text + 'Z' + SYMBOL['sun']
+    else:
+        metallicity = ''
+    return metallicity
+
+
 def summarize_star(star):
     """return one line summary of star"""
     if star.find('name').text[-2] == ' ':
         name = star.find('name').text[-1]
     else:
         name = ' '
-    return u'{0} {1} {2}{3}'.format(name, spectral_name(star), star.find('mass').text, 'M'+SYMBOL['sun'])
+    mass = format_star_mass_str(star)
+    radius = format_star_radius_str(star)
+    temp = format_body_temp_str(star)
+    metallicity = format_star_metal_str(star)
+    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(name, spectral_name(star),
+                                             mass, radius, '', '', temp, metallicity)
 
 
 def format_planet_mass_str(planet):
@@ -324,23 +373,19 @@ def format_planet_radius_str(planet):
         return u'{:0.3f}R{}'.format(round(use_radius, 3), symbol)
 
 
-def format_planet_temp_str(planet):
-    temp = planet.find('temperature')
-    if temp is not None:
-        return temp.text + 'K'
-    else:
-        return ''
-
-
-def format_disc_method(method):
-    """Takes discovery method string and abbreviates it."""
+def format_method_date(body):
+    """Formats discovery method and date and returns string of form:
+    2001rv, 2008trn"""
+    method = body.find('discoverymethod').text
+    year = body.find('discoveryyear').text
     if method == 'transit':
-        return 'trn'
+        meth = 'trn'
     elif method == 'RV':
-        return 'rv'
+        meth =  'rv'
     elif method == 'microlensing':
-        return u'\u03BC'+'lens'
-
+        meth = u'\u03BC'+'lens'
+    return year + meth
+    
 
 def format_planet_sma_str(planet):
     """Returns string describing Orbit"""
@@ -365,10 +410,10 @@ def summarize_planet(planet):
 
     mass = format_planet_mass_str(planet)
     radius = format_planet_radius_str(planet)
-    temp = format_planet_temp_str(planet)
+    temp = format_body_temp_str(planet)
     sma = format_planet_sma_str(planet)
     period = format_planet_period_str(planet)
-    method = format_disc_method(planet.find('discoverymethod').text)
+    method = format_method_date(planet)
     return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(reliable, letter,
                                          mass, radius, sma, period, temp, 
                                          method)
