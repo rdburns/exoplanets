@@ -529,12 +529,15 @@ def summarize_system(system):
     return '\n'.join(s)
 
 
-def get_max_sma(tree):
-    """Returns max Semi-Major Axis (AU) for all planets in tree.
+def get_max_value(tree, tag='semimajoraxis'):
+    """Returns max value for all planets in tree.
+
+    Default is to use Semi-Major Axis (AU) for all planets in tree.
 
     :param tree: An lxml etree
+    :param tag: A string containing a tag name.
     """
-    allsmas = [float(x.text) for x in tree.findall('.//semimajoraxis')]
+    allsmas = [float(x.text) for x in tree.findall('.//'+tag)]
     if allsmas == []:
         return 0
     else:
@@ -565,8 +568,11 @@ def ascii_system(system):
 
     dots = []
     names = []
-    maxsma = get_max_sma(system)
-
+    sorttag = 'semimajoraxis'
+    maxsma = get_max_value(system, sorttag)
+    if maxsma == 0:
+        sorttag = 'period'
+        maxsma = get_max_value(system, sorttag)
     if maxsma == 0:
         return ''
 
@@ -580,13 +586,14 @@ def ascii_system(system):
         if binary:
             t[0] = star.find('name').text[-1]
         for planet in star.iterfind('planet'):
-            smanode = planet.find('semimajoraxis')
+            smanode = planet.find(sorttag)
             if smanode is None:
                 sma = 0
             else:
                 sma = float(smanode.text)
             loc = int((sma / maxsma) * 78) + 1
             while t[loc] != ' ':
+                # Makes sure we show all planets even if they're in the same bin.
                 loc += 1
             t[loc] = planet_name(planet)
             d[loc] = get_planet_size(planet).value
