@@ -246,7 +246,7 @@ def write_tree(tree,fn):
 def planet_name(planet):
     """Returns name of planet, just letter.
     """
-    return planet.find('name').text.split(' ')[-1]
+    return planet.find('name').text[-1]
 
 
 def spectral_colorize(s, star):
