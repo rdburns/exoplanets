@@ -397,6 +397,10 @@ def format_method_date(body):
         meth =  'rv'
     elif method == 'microlensing':
         meth = u'\u03BC'+'lens'
+    elif method == 'imaging':
+        meth = 'img'
+    else:
+        meth = ''
     return year + meth
     
 
@@ -571,7 +575,11 @@ def ascii_system(system):
         if binary:
             t[0] = star.find('name').text[-1]
         for planet in star.iterfind('planet'):
-            sma = float(planet.find('semimajoraxis').text)
+            smanode = planet.find('semimajoraxis')
+            if smanode is None:
+                sma = 0
+            else:
+                sma = float(smanode.text)
             loc = int((sma / maxsma) * 78) + 1
             while t[loc] != ' ':
                 loc += 1
