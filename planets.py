@@ -428,8 +428,16 @@ def system_coord_str(system):
     """Return String representing sky coordinates
 
     :param system: lxml etree at system node"""
-    ra = system.find('rightascension').text.split(' ')
-    dec = system.find('declination').text.split(' ')
+    ranode = system.find('rightascension')
+    if ranode is not None:
+        ra = ranode.text.split(' ')
+    else:
+        ra = ['?','?','?']
+    decnode = system.find('declination')
+    if decnode is not None:
+        dec = decnode.text.split(' ')
+    else:
+        dec = ['?','?','?']
     distance = system.find('distance')
     if distance is not None:
         dist_flt = float(distance.text)
