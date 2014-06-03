@@ -13,6 +13,7 @@ import gzip
 import io
 import time
 import cmd
+import random
 
 # TODO
 # There's something weird with the system name autocomplete
@@ -173,7 +174,15 @@ def find_system_by_name(name):
     if target == []:
         return None
     return get_parent_tag(target[0], 'system')
-    
+
+
+def get_random_system():
+    """Returns random system node.
+    """
+    systems = tree.xpath('.//system')
+    idx = random.randrange(0,len(systems))
+    return systems[idx]
+
 
 def most_recent_planet(tree):
     """Returns planet node that has most recent update date.
@@ -592,11 +601,12 @@ def get_system_names(tree):
 
 
 class PlanetCmd(cmd.Cmd):
-    def __init__(self, system_names):
+    def __init__(self, tree):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
         self.intro = "Exoplanet Explorer (type help, tab autocompletes commmands and system names):"
-        self.system_names = system_names
+        self.system_names = get_system_names(tree)
+        self.tree = tree
 
     def do_most_recent_planet(self, args):
         planet = most_recent_planet(tree)
@@ -638,6 +648,13 @@ class PlanetCmd(cmd.Cmd):
     def help_system(self):
         print "system <systen_name>"
         print "Will print system summary of supplied system, will autocomplete system names with tab."
+
+    def do_random(self, args):
+        system = get_random_system()
+        print summarize_system(system)
+        
+    def help_random(self):
+        print "Show random system"
         
     def do_tweet(self, system_name):
         system = find_system_by_name(system_name)
@@ -669,7 +686,6 @@ class PlanetCmd(cmd.Cmd):
 
 if __name__ == '__main__':
     tree = get_etree()
-    system_names = get_system_names(tree)
-    PlanetCmd(system_names).cmdloop()
+    PlanetCmd(tree).cmdloop()
     
 
