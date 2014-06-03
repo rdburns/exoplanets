@@ -55,7 +55,9 @@ SYMBOL = {'sun': u'\u2609',
           'neptune': u'\u2646',
           'jupiter': u'\u2643',
           'saturn': u'\u2644',
-          'uranus': u'\u26E2'}
+          'uranus': u'\u26E2',
+          'ellipsis': u'\u2026'
+          }
 
 # In AUs:
 SMA = {'mercury': 0.387,
@@ -414,9 +416,13 @@ def summarize_planet(planet):
     sma = format_planet_sma_str(planet)
     period = format_planet_period_str(planet)
     method = format_method_date(planet)
-    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(reliable, letter,
+    if planet.find('description') is not None:
+        desc = SYMBOL['ellipsis']
+    else:
+        desc = ' '
+    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {} {}'.format(reliable, letter,
                                          mass, radius, sma, period, temp, 
-                                         method)
+                                         method, desc)
 
 
 def convert_pc_to_ly(pc):
