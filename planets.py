@@ -56,7 +56,9 @@ SYMBOL = {'sun': u'\u2609',
           'jupiter': u'\u2643',
           'saturn': u'\u2644',
           'uranus': u'\u26E2',
-          'ellipsis': u'\u2026'
+          'ellipsis': u'\u2026',
+          'degrees': u'\u00B0',
+          'eccentricity': u"\U0001D452"
           }
 
 # In AUs:
@@ -401,6 +403,24 @@ def format_planet_period_str(planet):
     return '{:0.2f}d'.format(period)
 
 
+def format_eccentricity_str(planet):
+    """Returns string describing eccentricity"""
+    eccnode = planet.find('eccentricity')
+    if eccnode is None:
+        return ''
+    else:
+        return SYMBOL['eccentricity'] + '={:0.2f}'.format(float(eccnode.text))
+
+
+def format_inclination_str(planet):
+    """Returns string describing inclination"""
+    incnode = planet.find('inclination')
+    if incnode is None:
+        return ''
+    else:
+        return '{:0.2f}{}'.format(float(incnode.text), SYMBOL['degrees'])
+
+
 def summarize_planet(planet):
     """Return one line summary of planet"""
     if planet.find('list').text == "Confirmed planets":
@@ -420,9 +440,14 @@ def summarize_planet(planet):
         desc = SYMBOL['ellipsis']
     else:
         desc = ' '
-    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {} {}'.format(reliable, letter,
-                                         mass, radius, sma, period, temp, 
-                                         method, desc)
+    eccentricity = format_eccentricity_str(planet)
+    inclination = format_inclination_str(planet)
+        
+    fmt = u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {:>6} {:>6} {} {}'
+    return fmt.format(reliable, letter,
+                      mass, radius, sma, period, temp,
+                      eccentricity, inclination, 
+                      method, desc)
 
 
 def convert_pc_to_ly(pc):
@@ -453,7 +478,7 @@ def system_coord_str(system):
         dist_str = ''
         
     return ('RA:' + ra[0] + 'h' + ra[1] + 'm' + ra[0] + 's' +
-            ' DEC:' + dec[0] + u'\u00B0' + dec[1] + "'" + dec[2] + '"' +
+            ' DEC:' + dec[0] + SYMBOL['degrees'] + dec[1] + "'" + dec[2] + '"' +
             ' ' + dist_str
             )
 
