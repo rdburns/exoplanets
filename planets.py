@@ -400,6 +400,8 @@ def format_method_date(body):
         meth = u'\u03BC'+'lens'
     elif method == 'imaging':
         meth = 'img'
+    elif method == 'timing':
+        meth = 'tim'
     else:
         meth = ''
     return year + meth
