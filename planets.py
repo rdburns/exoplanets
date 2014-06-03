@@ -402,8 +402,12 @@ def format_method_date(body):
 
 def format_planet_sma_str(planet):
     """Returns string describing Orbit"""
-    sma = float(planet.find('semimajoraxis').text)
-    return '{:0.3f}AU'.format(sma)
+    smanode = planet.find('semimajoraxis')
+    if smanode is None:
+        return ''
+    else:
+        sma = float(smanode.text)
+        return '{:0.3f}AU'.format(sma)
 
 
 def format_planet_period_str(planet):
@@ -522,7 +526,10 @@ def get_max_sma(tree):
     :param tree: An lxml etree
     """
     allsmas = [float(x.text) for x in tree.findall('.//semimajoraxis')]
-    return max(allsmas)
+    if allsmas == []:
+        return 0
+    else:
+        return max(allsmas)
 
 
 def ascii_system(system):
@@ -550,6 +557,9 @@ def ascii_system(system):
     dots = []
     names = []
     maxsma = get_max_sma(system)
+
+    if maxsma == 0:
+        return ''
 
     sol = make_sol(maxsma)
     
@@ -617,21 +627,21 @@ class PlanetCmd(cmd.Cmd):
 
     def do_most_recent_system(self, args):
         print "Most recently updated system is:"
-        most_recent = most_recent_system(tree)
+        most_recent = most_recent_system(self.tree)
         print summarize_system(most_recent)
 
     def help_most_recent_system(self):
         print "Shows most recently updated system."
         
     def do_stats(self, args):
-        print str(num_tags(tree, 'system')) + " systems"
-        print str(num_tags(tree, 'star')) + " stars"
-        print str(num_tags(tree, 'binary')) + " binaries"
-        print str(num_tags(tree, 'planet')) + " planets"
+        print str(num_tags(self.tree, 'system')) + " systems"
+        print str(num_tags(self.tree, 'star')) + " stars"
+        print str(num_tags(self.tree, 'binary')) + " binaries"
+        print str(num_tags(self.tree, 'planet')) + " planets"
         
     def do_largest_system(self, args):
         print "Largest system is:"
-        largest = largest_system(tree)
+        largest = largest_system(self.tree)
         #write_tree(largest,'largest.xml')
         print summarize_system(largest)
 
@@ -651,6 +661,7 @@ class PlanetCmd(cmd.Cmd):
 
     def do_random(self, args):
         system = get_random_system()
+        print system.find('name').text
         print summarize_system(system)
         
     def help_random(self):
