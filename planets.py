@@ -23,13 +23,24 @@ try:
 except ImportError:
     print "You need the enum backport."
     print "pip install enum34"
+    sys.exit(1)
 
+try:
+    import inflect
+except ImportError:
+    print "You need to install inflect."
+    print "pip install inflect"
+    sys.exit(1)
+    
 try: 
     from colorama import Fore, Back, Style, init
     init()
 except ImportError:
     # colorama support is optional.
     print "pip install colorama to get colors for stellar classes, etc."
+
+    
+inf = inflect.engine()
 
     
 class PlanetSize(Enum):
@@ -514,7 +525,13 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + system_coord_str(system))
-    s.append(str(num_tags(system, 'star')) + ' stars - ' + str(num_tags(system, 'planet')) + ' planets')
+    num_stars = num_tags(system, 'star')
+    num_planets = num_tags(system, 'planet')
+    s.append('{} {} - {} {}'.format(num_stars,
+                                    inf.plural('star',num_stars),
+                                    num_planets,
+                                    inf.plural('planet',num_planets)
+                                    ))
     s.append(ascii_system(system))
     s.append('')
     binary = system.find('binary')
