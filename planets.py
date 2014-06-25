@@ -585,7 +585,7 @@ def ascii_system(system):
         t = [' ']*80
         d = [' ']*80
         d[0] = spectral_colorize('*', star)
-        if binary:
+        if binary is not None:
             t[0] = star.find('name').text[-1]
         for planet in star.iterfind('planet'):
             smanode = planet.find(sorttag)
