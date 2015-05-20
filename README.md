@@ -9,11 +9,10 @@ When you view a system it will show:
 * ascii art view of system with sol system symbols overlaid for scale.
 * approriately colored spectral class
 
-Requirements4
+Requirements
 ------------
 
-* pip install enum34
-* pip install colorama (optional, but nice!)
+* pip install -r requirements.txt 
 
 Usage
 -----
