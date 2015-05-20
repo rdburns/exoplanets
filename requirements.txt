@@ -1,0 +1,4 @@
+enum
+inflect
+colorama
+requests

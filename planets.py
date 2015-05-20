@@ -8,30 +8,25 @@ http://twitter.com/ryanburns
 
 import sys
 from lxml import etree
-import urllib
 import gzip
 import io
 import time
 import cmd
 import random
+from pprint import pprint
 
 # TODO
 # There's something weird with the system name autocomplete
 
 try:
     from enum import Enum
+    import inflect
+    import requests
 except ImportError:
-    print "You need the enum backport."
-    print "pip install enum34"
+    print "You need the requirements."
+    print "pip install -r requirements.txt"
     sys.exit(1)
 
-try:
-    import inflect
-except ImportError:
-    print "You need to install inflect."
-    print "pip install inflect"
-    sys.exit(1)
-    
 try: 
     from colorama import Fore, Back, Style, init
     init()
@@ -166,16 +161,18 @@ def get_planet_size(planet):
             return PlanetSize.jupiter
         else:
             return PlanetSize.neptune
-    return PlanetSize.unknown    
+    return PlanetSize.unknown
     
 
-def get_etree():
-    url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
-    fo = io.BytesIO(urllib.urlopen(url).read())
+def get_etree(url):
+    """Alternate using requests library."""
+    start_time = time.time()
+    r = requests.get(url)
+    fo = io.BytesIO(r.content)
     tree = etree.parse(gzip.GzipFile(fileobj=fo))
     return tree
 
-
+    
 def find_system_by_name(name):
     """Returns system node matching supplied name
 
@@ -735,7 +732,8 @@ class PlanetCmd(cmd.Cmd):
         
 
 if __name__ == '__main__':
-    tree = get_etree()
+    url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
+    tree = get_etree(url)
     PlanetCmd(tree).cmdloop()
     
 
