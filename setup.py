@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 
+from exoplanets import __version__
+
 setup(name='exoplanets',
-      version='0.0.1',
+      version=__version__,
       scripts=['exoplanets.py'],
 
       install_requires=[
