@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """Open Exoplanet Catalog Explorer
 
 Ryan Burns
