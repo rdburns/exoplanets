@@ -108,7 +108,7 @@ def get_planet_radius(planet, multiple='jupiter'):
     If earth, will return number of earth masses, etc.
     """
     radius_node = planet.find('radius')
-    if radius_node is None:
+    if radius_node is None or radius_node.text is None:
         return None
     jup_radii = float(radius_node.text)
     if multiple == 'jupiter':
