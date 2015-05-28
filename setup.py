@@ -4,6 +4,12 @@ setup(name='exoplanets',
       version='0.0.1',
       scripts=['exoplanets.py'],
 
+      install_requires=[
+          "enum",
+          "inflect",
+          "colorama",
+          "requests"],
+
       #MetaData:
       description='Commandline viewer for the Open Exoplanet Catalog. http://www.openexoplanetcatalogue.com/',
       url='https://github.com/rdburns/exoplanets',
