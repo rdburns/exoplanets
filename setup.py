@@ -9,6 +9,7 @@ setup(name='exoplanets',
       url='https://github.com/rdburns/exoplanets',
       author='Ryan Burns',
       author_email='rdburns@gmail.com',
+      license='unlicense',
       packages=find_packages(),
       zip_safe=False)
 
