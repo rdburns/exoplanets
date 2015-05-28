@@ -1,5 +1,5 @@
-Planets
-=======
+ExoPlanets
+==========
 
 Commandline app for the Open Exoplanet Catalog.
 http://www.openexoplanetcatalogue.com/
