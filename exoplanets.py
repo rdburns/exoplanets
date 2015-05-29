@@ -7,13 +7,10 @@ http://twitter.com/ryanburns
 """
 
 import sys
-from lxml import etree
-import gzip
-import io
-import time
 import cmd
-import random
 from pprint import pprint
+
+from exoplanets import extract
 
 # TODO
 # There's something weird with the system name autocomplete
@@ -21,7 +18,6 @@ from pprint import pprint
 try:
     from enum import Enum
     import inflect
-    import requests
 except ImportError:
     print "You need the requirements."
     print "pip install -r requirements.txt"
@@ -46,13 +42,31 @@ class PlanetSize(Enum):
     neptune = 'o'
     jupiter = '@'
     unknown = '?'
-         
+    
+def get_planet_size(planet):
+    """Returns PlanetSize enum for planet.
 
-#Constants
-JUPITER_IN_EARTH_MASSES = 317.828
-NEPTUNE_IN_EARTH_MASSES = 17.147
-JUPITER_IN_EARTH_RADII = 11.209 #equatorial
-NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
+    Makes determination based on radius and mass criteria.
+    :param planet: lxml etree node for <planet>
+    """
+    earth_radii = extract.planet_radius(planet, 'earth')
+    if earth_radii is not None:
+        if earth_radii < 2:
+            return PlanetSize.terrestrial
+        elif earth_radii > 7:
+            return PlanetSize.jupiter
+        else:
+            return PlanetSize.neptune
+    else:
+        earth_masses = extract.planet_mass(planet, 'earth')
+        if earth_masses < 10:
+            return PlanetSize.terrestrial
+        elif earth_masses > 30:
+            return PlanetSize.jupiter
+        else:
+            return PlanetSize.neptune
+    return PlanetSize.unknown
+         
 
 SYMBOL = {'sun': u'\u2609',
           'mercury': u'\u263F',
@@ -100,177 +114,6 @@ else:
     RSTCOLOR = Fore.RESET + Style.RESET_ALL
 
 
-def get_planet_radius(planet, multiple='jupiter'):
-    """Returns planet radius as a float times Jupiter Radii
-
-    :param planet: lxml etree node for <planet>
-    :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
-    If earth, will return number of earth masses, etc.
-    """
-    radius_node = planet.find('radius')
-    if radius_node is None or radius_node.text is None:
-        return None
-    jup_radii = float(radius_node.text)
-    if multiple == 'jupiter':
-        return jup_radii
-    elif multiple == 'neptune':
-        return (jup_radii * JUPITER_IN_EARTH_RADII) / NEPTUNE_IN_EARTH_RADII
-    elif multiple == 'earth':
-        return jup_radii * JUPITER_IN_EARTH_RADII
-
-    
-def get_planet_mass(planet, multiple='jupiter'):
-    """Returns planet mass as a float times mass of multiple.
-
-    :param planet: lxml etree node for <planet>
-    :param multiple: String, either 'jupiter', 'neptune', or 'earth'. \
-    If earth, will return number of earth masses, etc.
-    """
-    massnode = planet.find('mass')
-    if massnode is not None and massnode.text is not None:
-        jup_mass = float(massnode.text)
-    else:
-        return None
-    if multiple == 'jupiter':
-        return jup_mass
-    elif multiple == 'neptune':
-        return (jup_mass * JUPITER_IN_EARTH_MASSES) / NEPTUNE_IN_EARTH_MASSES
-    elif multiple == 'earth':
-        return jup_mass * JUPITER_IN_EARTH_MASSES
-
-    
-def get_planet_size(planet):
-    """Returns PlanetSize enum for planet.
-
-    Makes determination based on radius and mass criteria.
-    :param planet: lxml etree node for <planet>
-    """
-    earth_radii = get_planet_radius(planet, 'earth')
-    if earth_radii is not None:
-        if earth_radii < 2:
-            return PlanetSize.terrestrial
-        elif earth_radii > 7:
-            return PlanetSize.jupiter
-        else:
-            return PlanetSize.neptune
-    else:
-        earth_masses = get_planet_mass(planet, 'earth')
-        if earth_masses < 10:
-            return PlanetSize.terrestrial
-        elif earth_masses > 30:
-            return PlanetSize.jupiter
-        else:
-            return PlanetSize.neptune
-    return PlanetSize.unknown
-    
-
-def get_etree(url):
-    """Alternate using requests library."""
-    start_time = time.time()
-    r = requests.get(url)
-    fo = io.BytesIO(r.content)
-    tree = etree.parse(gzip.GzipFile(fileobj=fo))
-    return tree
-
-    
-def find_system_by_name(name):
-    """Returns system node matching supplied name
-
-    :param name: string containing desired system name.
-    """
-    system_name = name.replace('_',' ')
-    target = tree.xpath('.//system/name[text()="'+system_name+'"]')
-    if target == []:
-        return None
-    return get_parent_tag(target[0], 'system')
-
-
-def get_random_system():
-    """Returns random system node.
-    """
-    systems = tree.xpath('.//system')
-    idx = random.randrange(0,len(systems))
-    return systems[idx]
-
-
-def most_recent_planet(tree):
-    """Returns planet node that has most recent update date.
-
-    :param tree: lxml etree
-    :returns: lxml etree
-    """
-    updates = tree.findall('.//lastupdate')
-    update_time = [time.strptime(date.text,'%y/%m/%d') for date in updates]
-    planet = updates[update_time.index(max(update_time))].getparent()
-    return planet
-
-
-def most_recent_system(tree):
-    """Returns system with most recently updated planet.
-
-    :param tree: lxml etree
-    """
-    planet = most_recent_planet(tree)
-    return get_parent_tag(planet, 'system')
-
-
-def get_parent_tag(node, tag):
-    """Traverses up the tree from node until it finds tag and then returns that node.
-
-    :param node: The child node to start the search from
-    :param tag: String with tag type we're searching for.
-    """
-    if node.tag == tag:
-        return node
-    else:
-        return get_parent_tag(node.getparent(), tag)
-    
-
-def num_planets(tree):
-    """Returns the total number of planets in the tree
-
-    :param tree: lxml etree
-    :returns: integer representing number of planets.
-    """
-    return int(tree.xpath("count(.//planet)"))
-
-
-def num_tags(tree, tag):
-    """Returns the total number of tags in the tree of name tag
-
-    Example, count planets: num_tags(tree, 'planet')
-    
-    :param tree: lxml etree
-    :param tag: string containing <tag> name.
-    :returns: integer representing number of tags found.
-    """
-    return int(tree.xpath("count(.//" + tag + ")"))
-
-
-def largest_system(tree):
-    """Returns system node that has the largest number of planets.
-
-    :param tree: lxml etree
-    :returns: lxml etree centered on system with the mode planets.
-    """
-    system_size = [num_tags(system, 'planet') for system in tree.xpath(".//system")]
-    largest_idx = system_size.index(max(system_size))
-    root = tree.xpath("//systems")[0]
-    return root[largest_idx]
-
-
-def write_tree(tree,fn):
-    xmlstr = etree.tostring(tree, pretty_print=True)
-    with open(fn, 'w') as f:
-        f.write(xmlstr)
-
-
-def planet_name(planet):
-    """Returns name of planet, just letter.
-    """
-    return planet.find('name').text[-1]
-
-
 def spectral_colorize(s, star):
     """Returns string s with spectral color colorama codes
     """
@@ -284,7 +127,7 @@ def spectral_colorize(s, star):
         return s
 
 
-def spectral_name(star):
+def format_spectral_name(star):
     """Retruns string containing spectral name of star, with colorama color
 
     Doesn't include ANSII code if colorama is not installed.
@@ -351,7 +194,7 @@ def summarize_star(star):
     radius = format_star_radius_str(star)
     temp = format_body_temp_str(star)
     metallicity = format_star_metal_str(star)
-    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(name, spectral_name(star),
+    return u'{} {} {:>8} {:>8} {:>8} {:>8} {:>8} {}'.format(name, format_spectral_name(star),
                                              mass, radius, '', '', temp, metallicity)
 
 
@@ -361,14 +204,14 @@ def format_planet_mass_str(planet):
     Uses J2.3 for jupiter masses.
     Uses E3.4 for earth masses if under 0.05 jupiter masses.
     """
-    jup_mass = get_planet_mass(planet, 'jupiter')
+    jup_mass = extract.planet_mass(planet, 'jupiter')
     if jup_mass is None:
         return u'  ?M{}'.format(SYMBOL['jupiter'])
     else:
         planet_size = get_planet_size(planet)
         flt_mass = float(planet.find('mass').text)
         if planet_size.name == 'terrestrial':
-            use_mass = get_planet_mass(planet, 'earth')
+            use_mass = extract.planet_mass(planet, 'earth')
             symbol = SYMBOL['earth']
         else:
             use_mass = jup_mass
@@ -380,14 +223,14 @@ def format_planet_radius_str(planet):
     """Takes float multiple of Jupiter radius, and returns it rounded and prefixed.
 
     """
-    jup_radius = get_planet_radius(planet, 'jupiter')
+    jup_radius = extract.planet_radius(planet, 'jupiter')
     if jup_radius is None:
         return u'  ?R{}'.format(SYMBOL['jupiter'])
     else:
         planet_size = get_planet_size(planet)
         flt_radius = float(planet.find('radius').text)
         if planet_size.name == 'terrestrial':
-            use_radius = get_planet_radius(planet, 'earth')
+            use_radius = extract.planet_radius(planet, 'earth')
             symbol = SYMBOL['earth']
         else:
             use_radius = jup_radius
@@ -398,8 +241,16 @@ def format_planet_radius_str(planet):
 def format_method_date(body):
     """Formats discovery method and date and returns string of form:
     2001rv, 2008trn"""
-    method = body.find('discoverymethod').text
-    year = body.find('discoveryyear').text
+    mf = body.find('discoverymethod')
+    if mf is not None:
+        method = mf.text
+    else:
+        methos = '-'
+    yf = body.find('discoveryyear')
+    if yf is not None:
+        year = yf.text
+    else:
+        year = '-'
     if method == 'transit':
         meth = 'trn'
     elif method == 'RV':
@@ -460,7 +311,7 @@ def summarize_planet(planet):
     else:
         reliable = '?'
 
-    letter = planet_name(planet)
+    letter = extract.planet_name(planet)
 
     mass = format_planet_mass_str(planet)
     radius = format_planet_radius_str(planet)
@@ -522,8 +373,8 @@ def summarize_system(system):
     """
     s = []
     s.append(system.find('name').text + ' - ' + system_coord_str(system))
-    num_stars = num_tags(system, 'star')
-    num_planets = num_tags(system, 'planet')
+    num_stars = extract.num_tags(system, 'star')
+    num_planets = extract.num_tags(system, 'planet')
     s.append('{} {} - {} {}'.format(num_stars,
                                     inf.plural('star',num_stars),
                                     num_planets,
@@ -543,21 +394,6 @@ def summarize_system(system):
     for planet in system.iterfind('planet'):
         s.append('   ' + summarize_planet(planet))
     return '\n'.join(s)
-
-
-def get_max_value(tree, tag='semimajoraxis'):
-    """Returns max value for all planets in tree.
-
-    Default is to use Semi-Major Axis (AU) for all planets in tree.
-
-    :param tree: An lxml etree
-    :param tag: A string containing a tag name.
-    """
-    allsmas = [float(x.text) for x in tree.findall('.//'+tag)]
-    if allsmas == []:
-        return 0
-    else:
-        return max(allsmas)
 
 
 def ascii_system(system):
@@ -585,10 +421,10 @@ def ascii_system(system):
     dots = []
     names = []
     sorttag = 'semimajoraxis'
-    maxsma = get_max_value(system, sorttag)
+    maxsma = extract.max_value(system, sorttag)
     if maxsma == 0:
         sorttag = 'period'
-        maxsma = get_max_value(system, sorttag)
+        maxsma = extract.max_value(system, sorttag)
     if maxsma == 0:
         return ''
 
@@ -611,8 +447,9 @@ def ascii_system(system):
             while t[loc] != ' ':
                 # Makes sure we show all planets even if they're in the same bin.
                 loc += 1
-            t[loc] = planet_name(planet)
-            d[loc] = get_planet_size(planet).value
+            t[loc] = extract.planet_name(planet)
+            ps = get_planet_size(planet)
+            d[loc] = ps.value
         names.append(''.join(t))
         dots.append(''.join(d))
     result = []
@@ -633,11 +470,12 @@ def tweet_system(system):
         s.append(star.find('name').text)
         for planet in star.iterfind('planet'):
             planet_size = get_planet_size(planet)
-            s.append('  ' + planet_size.value + ' ' + planet_name(planet))
+            s.append('  ' + planet_size.value + ' ' + \
+                     extract.planet_name(planet))
     return '\n'.join(s)
 
 
-def get_system_names(tree):
+def system_names(tree):
     """Returns list of all system names.
 
     :param tree: Tree to find systems in.
@@ -651,11 +489,11 @@ class PlanetCmd(cmd.Cmd):
         cmd.Cmd.__init__(self)
         self.prompt = '> '
         self.intro = "Exoplanet Explorer (type help, tab autocompletes commmands and system names):"
-        self.system_names = get_system_names(tree)
+        self.system_names = system_names(tree)
         self.tree = tree
 
     def do_most_recent_planet(self, args):
-        planet = most_recent_planet(tree)
+        planet = extract.most_recent_planet(tree)
         print "Most recently updated planet is " + str(planet.find('name').text)
         print "  updated on " + planet.find('lastupdate').text
         print ""
@@ -663,29 +501,29 @@ class PlanetCmd(cmd.Cmd):
 
     def do_most_recent_system(self, args):
         print "Most recently updated system is:"
-        most_recent = most_recent_system(self.tree)
+        most_recent = extract.most_recent_system(self.tree)
         print summarize_system(most_recent)
 
     def help_most_recent_system(self):
         print "Shows most recently updated system."
         
     def do_stats(self, args):
-        print str(num_tags(self.tree, 'system')) + " systems"
-        print str(num_tags(self.tree, 'star')) + " stars"
-        print str(num_tags(self.tree, 'binary')) + " binaries"
-        print str(num_tags(self.tree, 'planet')) + " planets"
+        print str(extract.num_tags(self.tree, 'system')) + " systems"
+        print str(extract.num_tags(self.tree, 'star')) + " stars"
+        print str(extract.num_tags(self.tree, 'binary')) + " binaries"
+        print str(extract.num_tags(self.tree, 'planet')) + " planets"
         
     def do_largest_system(self, args):
         print "Largest system is:"
-        largest = largest_system(self.tree)
-        #write_tree(largest,'largest.xml')
+        largest = extract.largest_system(self.tree)
+        #extract.write_tree(largest,'largest.xml')
         print summarize_system(largest)
 
     def help_largest_system(self):
         print "Shows summary of system with most plenets."
 
     def do_system(self, system_name):
-        system = find_system_by_name(system_name)
+        system = extract.find_system_by_name(self.tree, system_name)
         if system is None:
             print "Supply system name as argument, you can use tab to autocomplete."
         else:
@@ -696,7 +534,7 @@ class PlanetCmd(cmd.Cmd):
         print "Will print system summary of supplied system, will autocomplete system names with tab."
 
     def do_random(self, args):
-        system = get_random_system()
+        system = extract.random_system(self.tree)
         print system.find('name').text
         print summarize_system(system)
         
@@ -704,7 +542,7 @@ class PlanetCmd(cmd.Cmd):
         print "Show random system"
         
     def do_tweet(self, system_name):
-        system = find_system_by_name(system_name)
+        system = extract.find_system_by_name(self.tree, system_name)
         if system is None:
             print "Supply system name as argument, you can use tab to autocomplete."
         else:
@@ -733,7 +571,7 @@ class PlanetCmd(cmd.Cmd):
 
 if __name__ == '__main__':
     url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
-    tree = get_etree(url)
+    tree = extract.get_tree(url)
     PlanetCmd(tree).cmdloop()
     
 
