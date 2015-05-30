@@ -68,7 +68,6 @@ class PlanetCmd(cmd.Cmd):
 
     def do_random(self, args):
         system = extract.random_system(self.tree)
-        print system.find('name').text
         print formatters.summarize_system(system)
 
     def help_random(self):
