@@ -41,7 +41,7 @@ def planet_radius(planet, multiple='jupiter'):
     elif multiple == 'earth':
         return jup_radii * JUPITER_IN_EARTH_RADII
 
-    
+
 def planet_mass(planet, multiple='jupiter'):
     """Returns planet mass as a float times mass of multiple.
 
@@ -60,7 +60,7 @@ def planet_mass(planet, multiple='jupiter'):
         return (jup_mass * JUPITER_IN_EARTH_MASSES) / NEPTUNE_IN_EARTH_MASSES
     elif multiple == 'earth':
         return jup_mass * JUPITER_IN_EARTH_MASSES
-    
+
 
 def get_tree(url="https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"):
     """Retrieve exoplanets XML database using requests library."""
@@ -70,7 +70,7 @@ def get_tree(url="https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/
     tree = etree.parse(gzip.GzipFile(fileobj=fo))
     return tree
 
-    
+
 def find_system_by_name(tree, name):
     """Returns system node matching supplied name
 
@@ -123,7 +123,7 @@ def parent_tag(node, tag):
         return node
     else:
         return parent_tag(node.getparent(), tag)
-    
+
 
 def num_planets(tree):
     """Returns the total number of planets in the tree
@@ -138,7 +138,7 @@ def num_tags(tree, tag):
     """Returns the total number of tags in the tree of name tag
 
     Example, count planets: num_tags(tree, 'planet')
-    
+
     :param tree: lxml etree
     :param tag: string containing <tag> name.
     :returns: integer representing number of tags found.
@@ -167,9 +167,9 @@ def largest_system(tree):
     :param tree: lxml etree
     :returns: lxml etree centered on system with the mode planets.
     """
-    system_size = [num_tags(system, 'planet') for system in etree.xpath(".//system")]
+    system_size = [num_tags(system, 'planet') for system in tree.xpath(".//system")]
     largest_idx = system_size.index(max(system_size))
-    root = etree.xpath("//systems")[0]
+    root = tree.xpath("//systems")[0]
     return root[largest_idx]
 
 

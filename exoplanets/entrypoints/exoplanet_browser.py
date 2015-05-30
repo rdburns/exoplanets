@@ -26,7 +26,7 @@ class PlanetCmd(cmd.Cmd):
         self.tree = tree
 
     def do_most_recent_planet(self, args):
-        planet = extract.most_recent_planet(tree)
+        planet = extract.most_recent_planet(self.tree)
         print "Most recently updated planet is " + str(planet.find('name').text)
         print "  updated on " + planet.find('lastupdate').text
         print ""
@@ -39,13 +39,13 @@ class PlanetCmd(cmd.Cmd):
 
     def help_most_recent_system(self):
         print "Shows most recently updated system."
-        
+
     def do_stats(self, args):
         print str(extract.num_tags(self.tree, 'system')) + " systems"
         print str(extract.num_tags(self.tree, 'star')) + " stars"
         print str(extract.num_tags(self.tree, 'binary')) + " binaries"
         print str(extract.num_tags(self.tree, 'planet')) + " planets"
-        
+
     def do_largest_system(self, args):
         print "Largest system is:"
         largest = extract.largest_system(self.tree)
@@ -70,10 +70,10 @@ class PlanetCmd(cmd.Cmd):
         system = extract.random_system(self.tree)
         print system.find('name').text
         print formatters.summarize_system(system)
-        
+
     def help_random(self):
         print "Show random system"
-        
+
     def do_tweet(self, system_name):
         system = extract.find_system_by_name(self.tree, system_name)
         if system is None:
@@ -87,7 +87,7 @@ class PlanetCmd(cmd.Cmd):
 
     def complete_tweet(self, text, line, begidx, endidx):
         return self.complete_system(text, line, begidx, endidx)
-    
+
     def complete_system(self, text, line, begidx, endidx):
         if not text:
             completions = self.system_names[:]
@@ -97,13 +97,11 @@ class PlanetCmd(cmd.Cmd):
                             if f.lower().startswith(text.lower())
                             ]
         return completions
-        
+
     def do_exit(self, args):
         exit()
 
-        
+
 def main():
     tree = extract.get_tree()
     PlanetCmd(tree).cmdloop()
-    
-
