@@ -4,7 +4,14 @@ from exoplanets import __version__
 
 setup(name='exoplanets',
       version=__version__,
-      scripts=['exoplanets.py'],
+
+      
+      entry_points = {
+          'console_scripts': [
+              'exoplanets = exoplanets',
+              'freshest_exoplanet = exoplanets.entrypoints.freshest_exoplanet:main'
+              ]
+      },
 
       install_requires=[
           "enum",

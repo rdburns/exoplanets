@@ -20,7 +20,8 @@ JUPITER_IN_EARTH_MASSES = 317.828
 NEPTUNE_IN_EARTH_MASSES = 17.147
 JUPITER_IN_EARTH_RADII = 11.209 #equatorial
 NEPTUNE_IN_EARTH_RADII = 3.883 #equatorial
-    
+
+
 
 def planet_radius(planet, multiple='jupiter'):
     """Returns planet radius as a float times Jupiter Radii
@@ -61,8 +62,8 @@ def planet_mass(planet, multiple='jupiter'):
         return jup_mass * JUPITER_IN_EARTH_MASSES
     
 
-def get_tree(url):
-    """Alternate using requests library."""
+def get_tree(url="https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"):
+    """Retrieve exoplanets XML database using requests library."""
     start_time = time.time()
     r = requests.get(url)
     fo = io.BytesIO(r.content)
