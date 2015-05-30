@@ -9,17 +9,54 @@ When you view a system it will show:
 * ascii art view of system with sol system symbols overlaid for scale.
 * approriately colored spectral class
 
-Requirements
-------------
+Setup
+-----
 
-* pip install -r requirements.txt 
+This is under development, so I recommend you install it via GitHub,
+rather than PyPi.
+
+```bash
+git clone git@github.com:rdburns/exoplanets.git
+cd exoplanets
+python setup.py install
+```
 
 Usage
 -----
 
-> python planets.py
+There are two entry points.
 
-Uses Python Cmd module to let you query exoplanet catalog.
+### Exosummary
+
+This app shows the summary for one system. You can supply the
+system name as an argument, no quotes required:
+
+```bash
+exosummary HD 10180
+```
+
+You can also get the most recently updated system, which can
+be fun to put in your .bashrc when you open a new terminal:
+```bash
+exosummary --freshest
+```
+
+You can also pipe a system name directly into exosummary:
+```bash
+echo "HD 10180" | exosummary
+```
+
+### Exoplanet_browser
+
+```bash
+exoplanet_browser
+```
+
+This provides a more interactive way to browse the catalag.
+You can display system summaries with auto-complete on system
+names, which can be convenient. You can also display random systems,
+and run other commands.
+
 Try:
 
 > help
@@ -28,14 +65,14 @@ Try:
 
     Alpha Centauri - RA:14h39m14s DEC:-60°50'14" 1.3 pc / 4.4 ly
     2 stars - 1 planets
-    ☉ ☿ ♀⊕ ♂               ♃                  ♄                                     
-    *                                                                               
-    A                                                                               
-    *.                                                                              
-    Bb                                                                              
-     
-     A G2 V  1.105M☉  1.227R☉                      5790K 
-     B K1 V  0.934M☉  0.865R☉                      5260K 
+    ☉ ☿ ♀⊕ ♂               ♃                  ♄
+    *
+    A
+    *.
+    Bb
+
+     A G2 V  1.105M☉  1.227R☉                      5790K
+     B K1 V  0.934M☉  0.865R☉                      5260K
          b  1.130M⊕      ?R♃  0.040AU    3.23d                        2012rv …
 
 
@@ -44,9 +81,9 @@ Try:
     Largest system is:
     HD 10180 - RA:01h37m01s DEC:-60°30'42" 39.4 pc / 128.5 ly
     1 stars - 9 planets
-    ☉        ☿       ♀     ⊕           ♂                                            
+    ☉        ☿       ♀     ⊕           ♂
     *.o.o  o.   o                   o                                              @
-    bcid  ej   f                   g                                              h
+     bcid  ej   f                   g                                              h
 
        G1V   1.06M☉      ?R☉                    5911.0K 0.08Z☉
          b  1.300M⊕      ?R♃  0.022AU    1.18d  1915.3K 𝑒=0.05        2010rv …
@@ -63,14 +100,14 @@ Try:
 
     Kepler-47 - RA:19h41m19s DEC:+46°55'13" 1189.0 pc / 3878.0 ly
     2 stars - 2 planets
-    ☉                              ☿                          ♀                     
-    *                                                                               
-    A                                                                               
-    *                                                                               
-    B                                                                               
-     
-     A G  1.043M☉  0.964R☉                      5636K 
-     B G  0.362M☉ 0.3506R☉                      3357K 
+    ☉                              ☿                          ♀
+    *
+    A
+    *
+    B
+
+     A G  1.043M☉  0.964R☉                      5636K
+     B G  0.362M☉ 0.3506R☉                      3357K
      (..) circumbinary planets:
          b      ?M♃  0.272R♃  0.296AU   49.51d   448.8K        89.59° 2012trn …
          c      ?M♃  0.420R♃  0.989AU  303.16d   245.3K        89.83° 2012trn …
