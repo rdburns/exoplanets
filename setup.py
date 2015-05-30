@@ -5,11 +5,11 @@ from exoplanets import __version__
 setup(name='exoplanets',
       version=__version__,
 
-      
+
       entry_points = {
           'console_scripts': [
               'exoplanet_browser = exoplanets.entrypoints.exoplanet_browser:main',
-              'freshest_exoplanet = exoplanets.entrypoints.freshest_exoplanet:main'
+              'exosummary = exoplanets.entrypoints.exosummary:main'
               ]
       },
 
@@ -27,5 +27,3 @@ setup(name='exoplanets',
       license='unlicense',
       packages=find_packages(),
       zip_safe=False)
-
-
