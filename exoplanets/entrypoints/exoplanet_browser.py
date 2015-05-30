@@ -6,10 +6,12 @@ rdburns@gmail.com
 http://twitter.com/ryanburns
 """
 
+from __future__ import absolute_import
+
 import cmd
 from pprint import pprint
 
-from exoplanets import extract, formatters
+from ..core import extract, formatters
 
 # TODO
 # There's something weird with the system name autocomplete
@@ -98,9 +100,9 @@ class PlanetCmd(cmd.Cmd):
         
     def do_exit(self, args):
         exit()
-        
 
-if __name__ == '__main__':
+        
+def main():
     tree = extract.get_tree()
     PlanetCmd(tree).cmdloop()
     

@@ -8,7 +8,7 @@ setup(name='exoplanets',
       
       entry_points = {
           'console_scripts': [
-              'exoplanets = exoplanets',
+              'exoplanet_browser = exoplanets.entrypoints.exoplanet_browser:main',
               'freshest_exoplanet = exoplanets.entrypoints.freshest_exoplanet:main'
               ]
       },
