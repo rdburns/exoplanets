@@ -11,7 +11,6 @@ import argparse
 from ..core import extract, formatters
 
 
-
 def arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('system_name', nargs='*',
@@ -40,7 +39,12 @@ def main():
     if args.freshest:
         the_system = extract.most_recent_system(tree)
     else:
-        the_system = extract.find_system_by_name(tree, args.system_name)
+        if args.system_name == '':
+            for piped_input in sys.stdin:
+                req_name = piped_input.rstrip()
+        else:
+            req_name = args.system_name
+        the_system = extract.find_system_by_name(tree, req_name)
         if the_system is None:
             print "System not found."
             sys.exit(1)
