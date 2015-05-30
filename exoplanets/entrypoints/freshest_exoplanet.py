@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Prints terminal ASCII report of most recently updated
 exoplanet system.
 """
