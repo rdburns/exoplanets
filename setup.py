@@ -14,7 +14,7 @@ setup(name='exoplanets',
       },
 
       install_requires=[
-          "enum",
+          "enum34",
           "inflect",
           "colorama",
           "requests"],
