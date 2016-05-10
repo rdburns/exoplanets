@@ -5,8 +5,11 @@ exoplanet system.
 
 from __future__ import absolute_import
 
+import os
 import sys
 import argparse
+import time
+from lxml import etree
 
 from ..core import extract, formatters
 
@@ -34,7 +37,23 @@ def arguments():
 def main():
     args = arguments()
 
-    tree = extract.get_tree()
+    # Only download xml if older than:
+    max_age = 60 * 60 * 12  # hours
+
+    cache_fn = os.path.expanduser('~/exoplanets.xml')
+    if os.path.isfile(cache_fn):
+        st = os.stat(cache_fn)
+        age = (time.time() - st.st_mtime)
+    else:
+        age = max_age + 1
+
+    if age > max_age:
+        print "Downloading database ..."
+        tree = extract.get_tree()
+        tree.write(cache_fn)
+    else:
+        print "Using cached database ..."
+        tree = etree.parse(cache_fn)
 
     if args.freshest:
         the_system = extract.most_recent_system(tree)

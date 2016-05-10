@@ -64,7 +64,6 @@ def planet_mass(planet, multiple='jupiter'):
 
 def get_tree(url="https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"):
     """Retrieve exoplanets XML database using requests library."""
-    start_time = time.time()
     r = requests.get(url)
     fo = io.BytesIO(r.content)
     tree = etree.parse(gzip.GzipFile(fileobj=fo))
