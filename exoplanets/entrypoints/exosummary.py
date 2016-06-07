@@ -24,6 +24,9 @@ def arguments():
                         help=('Prints summary of most recently '
                         'updated system')
                         )
+    parser.add_argument('--random', action='store_true',
+                        help=('Prints summary of random system.')
+                        )
     args = parser.parse_args()
 
     # Join the positional args into a single string, so that
@@ -57,6 +60,8 @@ def main():
 
     if args.freshest:
         the_system = extract.most_recent_system(tree)
+    elif args.random:
+        the_system = extract.random_system(tree)
     else:
         if args.system_name == '':
             for piped_input in sys.stdin:
